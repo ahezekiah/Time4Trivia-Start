@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    h1 Login
+    if error != ''
+        label(class='error') #{error}
+    form(action='login', method='post')
+        label Username:
+        input(type='text', name='username')
+        br
+        label Password:
+        input(type='password', name='password')
+        br
+        input(type='submit', value='login')
+    h2 Don't have an account?
+    a(href='/u/register') Register Here

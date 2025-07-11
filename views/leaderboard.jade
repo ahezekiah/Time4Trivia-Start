@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1 Time 4 Trivia Leaderboard!
+  p Implement your leaderboard HERE. The values below are static but should come from your database. Make it look nice!
+  ol
+    each val in leaders
+      li
+        div
+          label= val.name + ' : '
+          span= val.score

@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    h1 Register
+    if error != ''
+        label(class='error') #{error}
+    form(action='/u/register', method='post')
+        label Username:
+        input(type='text', name='username')
+        br
+        label Email:
+        input(type='text', name='email')
+        br
+        label Password:
+        input(type='password', name='password')
+        br
+        input(type='submit', value='register')

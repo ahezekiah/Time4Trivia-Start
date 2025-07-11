@@ -1,0 +1,18 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/css/style.css')
+  body
+    nav
+      a(class='active', href='/') Home
+      a(class='active', href='/leaderboard') Leaderboard
+      if user
+        if isAdmin && isAdmin == "true"
+          a(class='', href='/a/users') Users
+        a(class='active', href='/g/play') Play
+        a(class='', href='/u/profile') Profile
+        a(class='', href='/u/logout') Logout #{user.username}
+      else
+        a(class='', href='/u/login') Login
+    block content

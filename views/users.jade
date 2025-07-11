@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  h1 Users
+  div(class="userContainer")
+    each user in users 
+      div(class='userBox')
+        h2 Username: #{user.username}
+        div Password: #{user.password}
+          div
+            span
+              b Role: &nbsp;
+            span #{user.roles[0]}
+          div
+            a(href='/a/delete/' + user.userId) remove
+          div
+            if user.roles[0] == "user"
+              a(href='/a/promote/' + user.userId) promote
+            else
+              a(href='/a/demote/' + user.userId) demote          
