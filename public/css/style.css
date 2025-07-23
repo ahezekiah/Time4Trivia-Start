@@ -1,17 +1,58 @@
 body {
   padding: 50px;
-  font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+  
+  background-color: powderblue;
 }
 
+h1{
+  text-align: center;
+  font-size: xx-large;
+  font-weight: bolder;
+  font-style: oblique;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #D499CC;
+  
+}
+
+h2{
+  font-size: x-large;
+  font-weight: bold;
+  font-style: oblique;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #A33E00;
+}
+
+p{
+  text-align: center;
+  font-size: large;
+  font-style: oblique;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: #BCA772;
+}
+
+
+
 a {
-  color: #00B7FF;
+  color: #1E4D53;
+  font-size: large;
+  margin: 5px;
+  padding: 5px;
+  font-style: oblique;
+}
+
+a:hover{
+  color: #00C59D;
 }
 
 label {
   display: inline-block;
   font-weight: bold;
   margin-right:5px;
+  font-style: oblique;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: #E27127;
 }
+
 
 nav {
   padding: 5px;
@@ -21,6 +62,38 @@ nav {
 nav a {
   margin-right: 5px;
   text-decoration: none;
+}
+
+nav a:hover{
+  color: #B2A6E4;
+}
+
+input{
+  padding-top: 10px;
+  margin-top: 15px;
+  padding-right: 5px;
+  padding-left: 5px;
+  padding-bottom: 10px;
+  background-color: #005771;
+  color: #81E9A8;
+}
+
+input[type=submit]{
+  padding-top: 10px;
+  margin-top: 20px;
+  padding-right: 10px;
+  padding-left: 10px;
+  color: #B2A6E4;
+  background-color: #003035;
+  text-align: center;
+  cursor: pointer;
+  font-size: medium;
+  font-style: oblique;
+}
+
+input[type=submit]:hover{
+  color: #E2FFFF;
+  background-color: #005771;
 }
 
 .error {
@@ -34,7 +107,7 @@ nav a {
 }
 
 .userBox {
-  border:solid 1px black;
+  border:solid 1px #2C283D;
   border-radius: 5px;
   padding: 5px;
   margin-top: 10px;
