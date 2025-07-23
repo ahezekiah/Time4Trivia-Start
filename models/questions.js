@@ -1,11 +1,9 @@
 class Question {
-  constructor(questionId, questionText, correctAnswer, incorrectAnswers, category = null, difficulty = 'medium') {
+  constructor(questionId, questionText, correctAnswer, incorrectAnswers) {
     this.questionId = questionId;
     this.questionText = questionText;
     this.correctAnswer = correctAnswer;
     this.incorrectAnswers = incorrectAnswers;
-    this.category = category;
-    this.difficulty = difficulty;
   }
 
   /**
@@ -35,7 +33,7 @@ class Question {
   }
 
   /**
-   * Shuffle an array using Fisher-Yates algorithm
+   * FISHER YATES YEEEEAAAAAH
    * @param {Array} array - Array to shuffle
    * @returns {Array} Shuffled array
    */

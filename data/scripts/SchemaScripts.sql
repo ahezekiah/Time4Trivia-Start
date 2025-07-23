@@ -45,8 +45,6 @@ create table if not exists Questions(
 	IncorrectAnswer1 varchar(255) NOT NULL,
 	IncorrectAnswer2 varchar(255) NOT NULL,
 	IncorrectAnswer3 varchar(255) NOT NULL,
-	Category varchar(100),
-	Difficulty varchar(20) DEFAULT 'medium',
 	PRIMARY KEY (QuestionId)
 );
 

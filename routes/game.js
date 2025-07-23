@@ -2,12 +2,28 @@ const express = require('express');
 const router = express.Router();
 const triviaController = require('../controllers/triviaController');
 
+// Helper function to shuffle an array
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// Helper function to get shuffled answers for a question
+function getShuffledAnswers(question) {
+  const allAnswers = [question.correctAnswer, ...question.incorrectAnswers];
+  return shuffleArray(allAnswers);
+}
+
 // Route to start/display the trivia game
 router.get('/play', async function(req, res, next) {
   try {
     // Check if user is logged in
     if (!req.session.user) {
-      return res.redirect('/users/login');
+      return res.redirect('/u/login');
     }
 
     // Get random questions for the game (default 10 questions)
@@ -24,6 +40,7 @@ router.get('/play', async function(req, res, next) {
       isAdmin: req.cookies.isAdmin,
       questions: questions,
       currentQuestion: questions[0],
+      currentQuestionAnswers: getShuffledAnswers(questions[0]),
       currentIndex: 0,
       totalQuestions: questions.length,
       score: 0
@@ -39,7 +56,7 @@ router.post('/answer', function(req, res, next) {
   try {
     // Check if user is logged in and game is active
     if (!req.session.user || !req.session.gameStarted) {
-      return res.redirect('/game/play');
+      return res.redirect('/g/play');
     }
 
     const { answer, questionId } = req.body;
@@ -50,7 +67,7 @@ router.post('/answer', function(req, res, next) {
     let isCorrect = false;
     
     // Check if answer is correct
-    if (currentQuestion && currentQuestion.isCorrectAnswer(answer)) {
+    if (currentQuestion && currentQuestion.correctAnswer.toLowerCase().trim() === answer.toLowerCase().trim()) {
       req.session.score += 1;
       isCorrect = true;
     }
@@ -62,7 +79,7 @@ router.post('/answer', function(req, res, next) {
     // Check if game is finished
     if (nextIndex >= questions.length) {
       // Game finished, redirect to results
-      return res.redirect('/game/results');
+      return res.redirect('/g/results');
     }
 
     // Continue with next question
@@ -73,6 +90,7 @@ router.post('/answer', function(req, res, next) {
       isAdmin: req.cookies.isAdmin,
       questions: questions,
       currentQuestion: nextQuestion,
+      currentQuestionAnswers: getShuffledAnswers(nextQuestion),
       currentIndex: nextIndex,
       totalQuestions: questions.length,
       score: req.session.score,
@@ -94,7 +112,7 @@ router.get('/results', async function(req, res, next) {
   try {
     // Check if user completed a game
     if (!req.session.user || !req.session.gameStarted) {
-      return res.redirect('/game/play');
+      return res.redirect('/g/play');
     }
 
     const score = req.session.score || 0;

@@ -4,19 +4,16 @@ const Question = require('../models/questions').Question;
 /**
  * Get a random set of trivia questions
  * @param {number} count - Number of questions to return (default: 10)
- * @param {string} difficulty - Difficulty level (easy, medium, hard) or null for any
  * @returns {Promise<Question[]>} Array of Question objects
  */
-exports.getRandomQuestions = async function(count = 10, difficulty = null) {
+exports.getRandomQuestions = async function(count = 10) {
     try {
-        const questions = await sqlDal.getRandomQuestions(count, difficulty);
+        const questions = await sqlDal.getRandomQuestions(count);
         return questions.map(q => new Question(
             q.QuestionId,
             q.QuestionText,
             q.CorrectAnswer,
-            [q.IncorrectAnswer1, q.IncorrectAnswer2, q.IncorrectAnswer3],
-            q.Category,
-            q.Difficulty
+            [q.IncorrectAnswer1, q.IncorrectAnswer2, q.IncorrectAnswer3]
         ));
     } catch (error) {
         console.error('Error getting random questions:', error);

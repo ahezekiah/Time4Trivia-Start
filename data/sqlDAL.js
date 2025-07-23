@@ -391,21 +391,20 @@ exports.updateUserPassword = async function (userId, hashedPassword) {
 /**
  * Get random trivia questions from the database
  * @param {number} count - Number of questions to return
- * @param {string} difficulty - Difficulty level filter (optional)
  * @returns {Promise<Object[]>} Array of question objects
  */
-exports.getRandomQuestions = async function(count = 10, difficulty = null) {
+exports.getRandomQuestions = async function(count = 10) {
     const con = await mysql.createConnection(sqlConfig);
     
     try {
-        let sql = `SELECT QuestionId, QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3, Category, Difficulty 
-                   FROM Questions`;
+        // For better performance with large datasets, we could use:
+        // 1. Get total count of questions
+        // 2. Generate random offsets and select specific questions
+        // But for typical trivia game sizes, ORDER BY RAND() is perfectly fine
         
-        if (difficulty) {
-            sql += ` WHERE Difficulty = '${difficulty}'`;
-        }
-        
-        sql += ` ORDER BY RAND() LIMIT ${count}`;
+        let sql = `SELECT QuestionId, QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3 
+                   FROM Questions
+                   ORDER BY RAND() LIMIT ${count}`;
         
         const [results] = await con.query(sql);
         return results;
