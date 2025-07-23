@@ -383,5 +383,108 @@ exports.updateUserPassword = async function (userId, hashedPassword) {
         result.status = STATUS_CODES.failure;
         result.message = err.message;
         return result;
+    }finally{
+        await con.end();
     }
 }
+
+/**
+ * Get random trivia questions from the database
+ * @param {number} count - Number of questions to return
+ * @param {string} difficulty - Difficulty level filter (optional)
+ * @returns {Promise<Object[]>} Array of question objects
+ */
+exports.getRandomQuestions = async function(count = 10, difficulty = null) {
+    const con = await mysql.createConnection(sqlConfig);
+    
+    try {
+        let sql = `SELECT QuestionId, QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3, Category, Difficulty 
+                   FROM Questions`;
+        
+        if (difficulty) {
+            sql += ` WHERE Difficulty = '${difficulty}'`;
+        }
+        
+        sql += ` ORDER BY RAND() LIMIT ${count}`;
+        
+        const [results] = await con.query(sql);
+        return results;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    } finally {
+        await con.end();
+    }
+};
+
+/**
+ * Save a user's game score to the database
+ * @param {number} userId - User ID
+ * @param {number} score - Score achieved
+ * @param {number} questionsAnswered - Total questions answered
+ * @returns {Promise<boolean>} Success status
+ */
+exports.saveUserScore = async function(userId, score, questionsAnswered) {
+    const con = await mysql.createConnection(sqlConfig);
+    
+    try {
+        let sql = `INSERT INTO UserScores (UserId, Score, QuestionsAnswered) VALUES (${userId}, ${score}, ${questionsAnswered})`;
+        
+        const [result] = await con.query(sql);
+        return result.affectedRows > 0;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    } finally {
+        await con.end();
+    }
+};
+
+/**
+ * Get leaderboard with top scores
+ * @param {number} limit - Number of top scores to return
+ * @returns {Promise<Object[]>} Array of score objects with user info
+ */
+exports.getLeaderboard = async function(limit = 10) {
+    const con = await mysql.createConnection(sqlConfig);
+    
+    try {
+        let sql = `SELECT us.Score, us.QuestionsAnswered, us.DatePlayed, u.Username, u.FirstName, u.LastName
+                   FROM UserScores us
+                   JOIN Users u ON us.UserId = u.UserId
+                   ORDER BY us.Score DESC, us.DatePlayed DESC
+                   LIMIT ${limit}`;
+        
+        const [results] = await con.query(sql);
+        return results;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    } finally {
+        await con.end();
+    }
+};
+
+/**
+ * Get a specific user's score history
+ * @param {number} userId - User ID
+ * @returns {Promise<Object[]>} Array of user's scores
+ */
+exports.getUserScores = async function(userId) {
+    const con = await mysql.createConnection(sqlConfig);
+    
+    try {
+        let sql = `SELECT Score, QuestionsAnswered, DatePlayed
+                   FROM UserScores
+                   WHERE UserId = ${userId}
+                   ORDER BY DatePlayed DESC`;
+        
+        const [results] = await con.query(sql);
+        return results;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    } finally {
+        await con.end();
+    }
+};

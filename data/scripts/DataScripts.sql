@@ -37,4 +37,18 @@ from users u
 	left join userroles ur on u.userid = ur.userid
 	left join roles r on r.roleid = ur.roleid;
 
+-- Insert sample trivia questions
+insert into Questions (QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3, Category, Difficulty)
+values 
+('What is the capital of France?', 'Paris', 'London', 'Berlin', 'Madrid', 'Geography', 'easy'),
+('Which planet is known as the Red Planet?', 'Mars', 'Venus', 'Jupiter', 'Saturn', 'Science', 'easy'),
+('Who painted the Mona Lisa?', 'Leonardo da Vinci', 'Pablo Picasso', 'Vincent van Gogh', 'Michelangelo', 'Art', 'medium'),
+('What is the largest mammal in the world?', 'Blue Whale', 'Elephant', 'Giraffe', 'Hippopotamus', 'Nature', 'easy'),
+('In which year did World War II end?', '1945', '1944', '1946', '1943', 'History', 'medium'),
+('What is the chemical symbol for gold?', 'Au', 'Ag', 'Fe', 'Cu', 'Science', 'medium'),
+('Which Shakespeare play features the character Hamlet?', 'Hamlet', 'Macbeth', 'Romeo and Juliet', 'Othello', 'Literature', 'easy'),
+('What is the smallest prime number?', '2', '1', '3', '0', 'Mathematics', 'easy'),
+('Which ocean is the largest?', 'Pacific Ocean', 'Atlantic Ocean', 'Indian Ocean', 'Arctic Ocean', 'Geography', 'easy'),
+('Who developed the theory of relativity?', 'Albert Einstein', 'Isaac Newton', 'Galileo Galilei', 'Nikola Tesla', 'Science', 'medium');
+
 select * from users;

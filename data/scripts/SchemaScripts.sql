@@ -37,3 +37,25 @@ create table if not exists UserRoles(
     foreign key (UserId) references Users(UserId),
     foreign key (RoleId) references Roles(RoleId)
 );
+
+create table if not exists Questions(
+	QuestionId int NOT NULL AUTO_INCREMENT,
+	QuestionText text NOT NULL,
+	CorrectAnswer varchar(255) NOT NULL,
+	IncorrectAnswer1 varchar(255) NOT NULL,
+	IncorrectAnswer2 varchar(255) NOT NULL,
+	IncorrectAnswer3 varchar(255) NOT NULL,
+	Category varchar(100),
+	Difficulty varchar(20) DEFAULT 'medium',
+	PRIMARY KEY (QuestionId)
+);
+
+create table if not exists UserScores(
+	ScoreId int NOT NULL AUTO_INCREMENT,
+	UserId int NOT NULL,
+	Score int NOT NULL,
+	QuestionsAnswered int NOT NULL,
+	DatePlayed datetime DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (ScoreId),
+	foreign key (UserId) references Users(UserId)
+);
