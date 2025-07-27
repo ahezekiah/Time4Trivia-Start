@@ -1,6 +1,42 @@
 extends layout
 
 block content
-    h1 Play Time 4 Trivia!
-    p Implement your trivia game here. User should be able to see questions, select answers and get their score when done. Scores should be saved for the leaderboard.
-    button Go
+    .container
+        h1 Time 4 Trivia!
+        
+        if lastAnswer
+            .alert(class=lastAnswer.wasCorrect ? 'alert-success' : 'alert-danger')
+                if lastAnswer.wasCorrect
+                    strong Correct! 
+                    | Great job!
+                else
+                    strong Incorrect! 
+                    | The correct answer was: #{lastAnswer.correctAnswer}
+        
+        if currentQuestion
+            .game-container
+                .progress-bar
+                    .progress-info
+                        span Question #{currentIndex + 1} of #{totalQuestions}
+                        span.score  Score: #{score}/#{currentIndex}
+                    .progress-visual
+                        .progress-fill(style=`width: ${((currentIndex) / totalQuestions) * 100}%`)
+                
+                .question-container
+                    h2.question-text #{currentQuestion.questionText}
+                
+                form(method='POST', action='/g/answer')
+                    input(type='hidden', name='questionId', value=currentQuestion.questionId)
+                    .answers-container
+                        each answer, index in currentQuestionAnswers
+                            .answer-option
+                                input(type='radio', name='answer', value=answer, id=`answer${index}`, required)
+                                label(for=`answer${index}`) #{answer}
+                    
+                    .submit-container
+                        button.btn.btn-primary(type='submit') Submit Answer
+        else
+            .no-questions
+                h2 No questions available
+                p Please try again later.
+                a.btn.btn-secondary(href='/') Back to Home

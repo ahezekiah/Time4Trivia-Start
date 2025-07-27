@@ -1,11 +1,44 @@
 extends layout
 
 block content
-  h1 Time 4 Trivia Leaderboard!
-  p Implement your leaderboard HERE. The values below are static but should come from your database. Make it look nice!
-  ol
-    each val in leaders
-      li
-        div
-          label= val.name + ' : '
-          span= val.score
+    .container
+        h1 Time 4 Trivia Leaderboard
+        
+        .leaderboard-container
+            if leaderboard && leaderboard.length > 0
+                table.leaderboard-table
+                    thead
+                        tr
+                            th.rank-col Rank
+                            th.player-col Player
+                            th.score-col Score
+                            th.questions-col Questions
+                            th.percentage-col Success Rate
+                            th.date-col Date Played
+                    tbody
+                        each entry, index in leaderboard
+                            tr(class=user && entry.Username === user.username ? 'current-user' : '')
+                                td.rank
+                                    if index === 0
+                                        .rank-badge.gold 🏆 #{index + 1}
+                                    else if index === 1
+                                        .rank-badge.silver 🥈 #{index + 1}
+                                    else if index === 2
+                                        .rank-badge.bronze 🥉 #{index + 1}
+                                    else
+                                        .rank-badge #{index + 1}
+                                td.player #{entry.Username}
+                                td.score #{entry.Score}/#{entry.QuestionsAnswered}
+                                td.questions #{entry.QuestionsAnswered}
+                                td.percentage #{Math.round((entry.Score / entry.QuestionsAnswered) * 100)}%
+                                td.date #{new Date(entry.DatePlayed).toLocaleDateString()}
+            else
+                .no-scores
+                    h3 No scores yet!
+                    p Be the first to play and set a high score!
+                    a.btn.btn-primary(href='/g/play') Start Playing
+        
+        .actions
+            a.btn.btn-primary(href='/g/play') Play Trivia
+            a.btn.btn-secondary(href='/') Back to Home
+        

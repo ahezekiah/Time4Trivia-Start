@@ -3,6 +3,7 @@ const router = express.Router();
 
 const userController = require('../controllers/userController');
 const STATUS_CODES = require('../models/statusCodes').STATUS_CODES;
+const security = require('../helpers/security');
 
 router.get('/register', function (req, res, next) {
   res.render('register', { title: 'Time 4 Trivia', error: '' });
@@ -34,8 +35,12 @@ router.post('/login', async function (req, res, next) {
   let result = await userController.login(username, password);
 
   if (result?.status == STATUS_CODES.success) {
-    res.cookie('isAdmin', result.data.roles.includes("admin"));
-    req.session.user = { userId: result.data.userId, username: result.data.username };
+    // Store user data and roles securely in session (server-side)
+    req.session.user = { 
+      userId: result.data.userId, 
+      username: result.data.username,
+      roles: result.data.roles // Store roles in session, not in cookies
+    };
     res.redirect('/');
   } else {
     res.render('login', { title: 'Time 4 Trivia', error: 'Invalid Login. Please try again.' })
@@ -43,15 +48,14 @@ router.post('/login', async function (req, res, next) {
 });
 
 router.get('/logout', function (req, res, next) {
-  // Clear session information?!?
+  // Clear session information
   req.session.destroy((err) => { if (err) { console.log(err); } });
-  res.clearCookie('isAdmin');
 
   res.redirect('/');
 });
 
 router.get('/profile', function (req, res, next) {
-  res.render('profile', { title: 'Time 4 Trivia', user: req.session.user, isAdmin: req.cookies.isAdmin, error: '' });
+  res.render('profile', { title: 'Time 4 Trivia', user: req.session.user, isAdmin: security.isAdmin(req.session.user), error: '' });
 });
 
 router.post('/profile', async function (req, res, next) {
@@ -60,14 +64,14 @@ router.post('/profile', async function (req, res, next) {
   let new2 = req.body.confirmPassword;
 
   if (new1 != new2) {
-    res.render('profile', { title: 'Time 4 Trivia', user: req.session.user, isAdmin: req.cookies.isAdmin, error: 'Password do not match' });
+    res.render('profile', { title: 'Time 4 Trivia', user: req.session.user, isAdmin: security.isAdmin(req.session.user), error: 'Password do not match' });
   } else {
     // console.log(`Changing passwor for userId ${req.session.user?.userId}`);
     let result = await userController.updateUserPassword(req.session.user.userId, current, new1, new2);
     if (result.status == STATUS_CODES.success) {
       res.redirect('/u/login');
     } else {
-      res.render('profile', { title: 'Time 4 Trivia', user: req.session.user, isAdmin: req.cookies.isAdmin, error: 'Password update failed' });
+      res.render('profile', { title: 'Time 4 Trivia', user: req.session.user, isAdmin: security.isAdmin(req.session.user), error: 'Password update failed' });
     }
   }
 });

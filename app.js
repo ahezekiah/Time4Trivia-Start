@@ -3,19 +3,32 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var crypto = require('crypto');
 
 var session = require('express-session');
+
+// Generate a secure random session secret
+const sessionSecret = crypto.randomBytes(64).toString('hex');
+
+// Secure session configuration
 var sessionConfig = {
-  secret: 'chunky bulldog',
-  cookie: {},
+  secret: sessionSecret,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    httpOnly: true, // Prevent XSS attacks
+    secure: false, // Set to true in production with HTTPS
+    sameSite: 'strict' // CSRF protection
+  },
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false, // More secure - don't save empty sessions
+  name: 'sessionId' // Change default session name
 }
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
 var gameRouter = require('./routes/game');
+var questionsRouter = require('./routes/questions');
 
 var app = express();
 
@@ -36,6 +49,7 @@ app.use('/', indexRouter);
 app.use('/u', usersRouter);
 app.use('/a', adminRouter);
 app.use('/g', gameRouter);
+app.use('/q', questionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
