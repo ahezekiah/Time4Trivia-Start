@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const triviaController = require('../controllers/triviaController');
+const auth = require('../middleware/auth');
+const security = require('../helpers/security');
+
+// All game routes require authentication
+router.use(auth.requireAuth);
 
 // Helper function to shuffle an array
 function shuffleArray(array) {
@@ -21,10 +26,7 @@ function getShuffledAnswers(question) {
 // Route to start/display the trivia game
 router.get('/play', async function(req, res, next) {
   try {
-    // Check if user is logged in
-    if (!req.session.user) {
-      return res.redirect('/u/login');
-    }
+    // Authentication is handled by middleware - no need to check here
 
     // Get random questions for the game (default 10 questions)
     const questions = await triviaController.getRandomQuestions(10);
@@ -37,7 +39,7 @@ router.get('/play', async function(req, res, next) {
 
     res.render('play', {
       user: req.session.user,
-      isAdmin: req.cookies.isAdmin,
+      isAdmin: security.isAdmin(req.session.user),
       questions: questions,
       currentQuestion: questions[0],
       currentQuestionAnswers: getShuffledAnswers(questions[0]),
@@ -87,7 +89,7 @@ router.post('/answer', function(req, res, next) {
     
     res.render('play', {
       user: req.session.user,
-      isAdmin: req.cookies.isAdmin,
+      isAdmin: security.isAdmin(req.session.user),
       questions: questions,
       currentQuestion: nextQuestion,
       currentQuestionAnswers: getShuffledAnswers(nextQuestion),
@@ -134,7 +136,7 @@ router.get('/results', async function(req, res, next) {
 
     res.render('results', {
       user: req.session.user,
-      isAdmin: req.cookies.isAdmin,
+      isAdmin: security.isAdmin(req.session.user),
       score: score,
       totalQuestions: totalQuestions,
       percentage: totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0,
@@ -154,7 +156,7 @@ router.get('/leaderboard', async function(req, res, next) {
     
     res.render('leaderboard', {
       user: req.session.user,
-      isAdmin: req.cookies.isAdmin,
+      isAdmin: security.isAdmin(req.session.user),
       leaderboard: leaderboard
     });
   } catch (error) {

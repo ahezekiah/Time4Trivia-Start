@@ -6,14 +6,14 @@ html
   body
     nav
       a(class='active', href='/') Home
-      a(class='active', href='/leaderboard') Leaderboard
       
       if user
-        if isAdmin && isAdmin == "true"
-          a(class='', href='/a/users') Users
-          a(class='', href='/a/viewQuestions') Questions
-        a(class='active', href='/g/play') Play
+        a(class='', href='/g/play') Play
         a(class='', href='/g/leaderboard') Leaderboard
+        a(class='', href='/q/addQuestions') Add Questions
+        a(class='', href='/q/viewQuestions') View Questions
+        if user.roles && user.roles.includes('admin')
+          a(class='', href='/a/users') Users
         a(class='', href='/u/profile') Profile
         a(class='', href='/u/logout') Logout #{user.username}
       else

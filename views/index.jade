@@ -5,7 +5,9 @@ block content
   p Welcome to #{title}
   if user
     p You are logged in as: #{user.username}
-    if(isAdmin)
-      p You are an Admin!
+    if user.roles[0] == 'admin'
+      p admin
+    else if user.roles[0] == 'user'
+      p stinky user
   else
     p Please #[a(href="/u/login") Login] to play
