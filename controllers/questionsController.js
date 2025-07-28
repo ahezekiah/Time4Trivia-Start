@@ -2,7 +2,7 @@ const sqlDal = require('../data/sqlDAL');
 
 /**
  * Get all questions for viewing
- * @returns {Promise<Object[]>} Array of question objects
+ * @returns {Promise<Object[]>} 
  */
 exports.getAllQuestions = async function() {
     try {
@@ -15,16 +15,15 @@ exports.getAllQuestions = async function() {
 
 /**
  * Add a new question
- * @param {string} questionText - The question text
- * @param {string} correctAnswer - The correct answer
- * @param {string} incorrectAnswer1 - First incorrect answer
- * @param {string} incorrectAnswer2 - Second incorrect answer
- * @param {string} incorrectAnswer3 - Third incorrect answer
- * @returns {Promise<Object>} Result object with status and message
+ * @param {string} questionText 
+ * @param {string} correctAnswer 
+ * @param {string} incorrectAnswer1 
+ * @param {string} incorrectAnswer2 
+ * @param {string} incorrectAnswer3 
+ * @returns {Promise<Object>} 
  */
 exports.addQuestion = async function(questionText, correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3) {
     try {
-        // Validate inputs
         if (!questionText || !correctAnswer || !incorrectAnswer1 || !incorrectAnswer2 || !incorrectAnswer3) {
             return {
                 status: 'failure',
@@ -32,14 +31,13 @@ exports.addQuestion = async function(questionText, correctAnswer, incorrectAnswe
             };
         }
 
-        // Trim whitespace
+        
         questionText = questionText.trim();
         correctAnswer = correctAnswer.trim();
         incorrectAnswer1 = incorrectAnswer1.trim();
         incorrectAnswer2 = incorrectAnswer2.trim();
         incorrectAnswer3 = incorrectAnswer3.trim();
 
-        // Check if answers are unique
         const answers = [correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3];
         const uniqueAnswers = [...new Set(answers.map(a => a.toLowerCase()))];
         
@@ -59,8 +57,8 @@ exports.addQuestion = async function(questionText, correctAnswer, incorrectAnswe
 
 /**
  * Get a question by ID
- * @param {number} questionId - Question ID
- * @returns {Promise<Object>} Question object
+ * @param {number} questionId 
+ * @returns {Promise<Object>}
  */
 exports.getQuestionById = async function(questionId) {
     try {
@@ -73,17 +71,16 @@ exports.getQuestionById = async function(questionId) {
 
 /**
  * Update an existing question
- * @param {number} questionId - Question ID
- * @param {string} questionText - The question text
- * @param {string} correctAnswer - The correct answer
- * @param {string} incorrectAnswer1 - First incorrect answer
- * @param {string} incorrectAnswer2 - Second incorrect answer
- * @param {string} incorrectAnswer3 - Third incorrect answer
- * @returns {Promise<Object>} Result object with status and message
+ * @param {number} questionId 
+ * @param {string} questionText 
+ * @param {string} correctAnswer 
+ * @param {string} incorrectAnswer1 
+ * @param {string} incorrectAnswer2 
+ * @param {string} incorrectAnswer3 
+ * @returns {Promise<Object>} 
  */
 exports.updateQuestion = async function(questionId, questionText, correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3) {
     try {
-        // Validate inputs
         if (!questionText || !correctAnswer || !incorrectAnswer1 || !incorrectAnswer2 || !incorrectAnswer3) {
             return {
                 status: 'failure',
@@ -91,14 +88,13 @@ exports.updateQuestion = async function(questionId, questionText, correctAnswer,
             };
         }
 
-        // Trim whitespace
         questionText = questionText.trim();
         correctAnswer = correctAnswer.trim();
         incorrectAnswer1 = incorrectAnswer1.trim();
         incorrectAnswer2 = incorrectAnswer2.trim();
         incorrectAnswer3 = incorrectAnswer3.trim();
 
-        // Check if answers are unique
+        
         const answers = [correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3];
         const uniqueAnswers = [...new Set(answers.map(a => a.toLowerCase()))];
         
@@ -118,8 +114,8 @@ exports.updateQuestion = async function(questionId, questionText, correctAnswer,
 
 /**
  * Delete a question by ID
- * @param {number} questionId - Question ID
- * @returns {Promise<Object>} Result object with status and message
+ * @param {number} questionId 
+ * @returns {Promise<Object>} 
  */
 exports.deleteQuestion = async function(questionId) {
     try {

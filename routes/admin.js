@@ -7,14 +7,12 @@ const STATUS_CODES = require('../models/statusCodes').STATUS_CODES;
 const auth = require('../middleware/auth');
 const security = require('../helpers/security');
 
-// All Admin Routes should only be accessible to logged in Admins!
 router.use(auth.requireAdmin);
 
 router.get('/users', async function (req, res, next) {
   let role = req.params.role;
   let users = await userController.getUsers(role);
 
-  // remote the admin username
   users = users.filter((u) => u.username != "admin");
 
   res.render('users', { title: 'Time 4 Trivia', user: req.session.user, isAdmin: security.isAdmin(req.session.user), users: users });

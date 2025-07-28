@@ -10,8 +10,8 @@ const STATUS_CODES = require('../models/statusCodes').STATUS_CODES;
  */
 exports.getUsers = async function () {
     let results = await sqlDAL.getUsers();
-    // console.log('getUsers');
-    // console.log(results);
+     console.log('getUsers');
+     console.log(results);
     return results;
 }
 
