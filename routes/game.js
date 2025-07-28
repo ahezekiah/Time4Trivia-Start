@@ -4,10 +4,10 @@ const triviaController = require('../controllers/triviaController');
 const auth = require('../middleware/auth');
 const security = require('../helpers/security');
 
-// All game routes require authentication
+// auth
 router.use(auth.requireAuth);
 
-// Helper function to shuffle an array
+// YATES SHUFFLE RAAAAAH
 function shuffleArray(array) {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -17,13 +17,11 @@ function shuffleArray(array) {
   return shuffled;
 }
 
-// Helper function to get shuffled answers for a question
 function getShuffledAnswers(question) {
   const allAnswers = [question.correctAnswer, ...question.incorrectAnswers];
   return shuffleArray(allAnswers);
 }
 
-// Route to start/display the trivia game
 router.get('/play', async function(req, res, next) {
   try {
     // Authentication is handled by middleware - no need to check here

@@ -3,8 +3,8 @@ const Question = require('../models/questions').Question;
 
 /**
  * Get a random set of trivia questions
- * @param {number} count - Number of questions to return (default: 10)
- * @returns {Promise<Question[]>} Array of Question objects
+ * @param {number} count 
+ * @returns {Promise<Question[]>} 
  */
 exports.getRandomQuestions = async function(count = 10) {
     try {
@@ -23,10 +23,10 @@ exports.getRandomQuestions = async function(count = 10) {
 
 /**
  * Save a user's game score
- * @param {number} userId - User ID
- * @param {number} score - Score achieved
- * @param {number} questionsAnswered - Total questions answered
- * @returns {Promise<boolean>} Success status
+ * @param {number} userId
+ * @param {number} score
+ * @param {number} questionsAnswered
+ * @returns {Promise<boolean>}
  */
 exports.saveUserScore = async function(userId, score, questionsAnswered) {
     try {
@@ -39,8 +39,8 @@ exports.saveUserScore = async function(userId, score, questionsAnswered) {
 
 /**
  * Get leaderboard (top scores)
- * @param {number} limit - Number of top scores to return (default: 10)
- * @returns {Promise<Object[]>} Array of score objects with user info
+ * @param {number} limit
+ * @returns {Promise<Object[]>}
  */
 exports.getLeaderboard = async function(limit = 10) {
     try {
@@ -53,8 +53,8 @@ exports.getLeaderboard = async function(limit = 10) {
 
 /**
  * Get a user's score history
- * @param {number} userId - User ID
- * @returns {Promise<Object[]>} Array of user's scores
+ * @param {number} userId
+ * @returns {Promise<Object[]>}
  */
 exports.getUserScores = async function(userId) {
     try {
