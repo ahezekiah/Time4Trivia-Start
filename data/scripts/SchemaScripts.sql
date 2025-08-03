@@ -10,6 +10,8 @@ drop table if exists Users;
 drop table if exists Roles;
 drop table if exists Questions;
 
+ALTER TABLE Users ADD disabled BOOLEAN DEFAULT false;
+
 create table if not exists Users(
 	UserId int NOT NULL AUTO_INCREMENT,
 	Username varchar(100) NOT NULL,
@@ -20,6 +22,7 @@ create table if not exists Users(
 	PRIMARY KEY (UserId),
 	CONSTRAINT Users_UniqueEmail UNIQUE(Email),
 	CONSTRAINT Users_UniqueUsername UNIQUE(Username)
+	-- Disabled field to allow for soft deletion
 );
 
 create table if not exists Roles(

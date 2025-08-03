@@ -123,4 +123,31 @@ router.get('/deleteQuestion/:questionId', async function (req, res, next) {
   }
 });
 
+// Disable user
+router.get('/disable/:userId', async function (req, res, next) {
+  let userId = req.params.userId;
+
+  let result = await userController.disableUser(userId);
+
+  if (result.status === STATUS_CODES.success) {
+    res.redirect('/a/users');
+  } else {
+    res.render('error', { message: 'Error disabling user', error: result.message });
+  }
+});
+
+// Enable user
+router.get('/enable/:userId', async function (req, res, next) {
+  let userId = req.params.userId;
+
+  let result = await userController.enableUser(userId);
+
+  if (result.status === STATUS_CODES.success) {
+    res.redirect('/a/users');
+  } else {
+    res.render('error', { message: 'Error enabling user', error: result.message });
+  }
+});
+
+
 module.exports = router;

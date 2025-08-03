@@ -1,37 +1,42 @@
 extends layout
 
 block content
-    h1 All Trivia Questions
-    
-    if questions && questions.length > 0
-        p Total Questions: #{questions.length}
+    .container
+        h1 All Trivia Questions
         
-        .questions-list
-            each question, index in questions
-                .question-item
-                    h3 Question #{question.QuestionId}
-                    p.question-text= question.QuestionText
-                    
-                    .answers
-                        p 
-                            strong Correct Answer: 
-                            span.correct-answer= question.CorrectAnswer
-                        p 
-                            strong Incorrect Answers:
-                        ul
-                            li= question.IncorrectAnswer1
-                            li= question.IncorrectAnswer2
-                            li= question.IncorrectAnswer3
-                    
-                    if isAdmin
-                        .admin-actions
-                            a(href=`/a/editQuestion/${question.QuestionId}`) Edit
-                            a(href=`/a/deleteQuestion/${question.QuestionId}`, onclick="return confirm('Are you sure you want to delete this question?')") Delete
-    else
-        p No questions found.
-        
-    .actions
-        a(href='/q/addQuestions') Add New Question
-        if isAdmin
-            a(href='/a/viewQuestions') Admin Question Management
-        a(href='/') Back to Home
+        if questions && questions.length > 0
+            p Total Questions: #{questions.length}
+            
+            .questions-list
+                each question, index in questions
+                    .question-item
+                        h3 Question #{question.QuestionId}
+                        p.question-text= question.QuestionText
+                        br
+                        if question.user
+                            strong Author Role:
+                            - var roleClass = 'role-' + question.user.role.toLowerCase()
+                            span(class='role-badge ' + roleClass)= question.user.role
+                        .answers
+                            p 
+                                strong Correct Answer: 
+                                span.correct-answer= question.CorrectAnswer
+                            p 
+                                strong Incorrect Answers:
+                            ul
+                                li= question.IncorrectAnswer1
+                                li= question.IncorrectAnswer2
+                                li= question.IncorrectAnswer3
+                        
+                        if isAdmin
+                            .admin-actions
+                                a(href=`/a/editQuestion/${question.QuestionId}`) Edit
+                                a(href=`/a/deleteQuestion/${question.QuestionId}`, onclick="return confirm('Are you sure you want to delete this question?')") Delete
+        else
+            p No questions found.
+            
+        .actions
+            a(href='/q/addQuestions') Add New Question
+            if isAdmin
+                a(href='/a/viewQuestions') Admin Question Management
+            a(href='/') Back to Home

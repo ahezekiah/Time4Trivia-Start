@@ -45,6 +45,11 @@ router.post('/login', async function (req, res, next) {
   } else {
     res.render('login', { title: 'Time 4 Trivia', error: 'Invalid Login. Please try again.' })
   }
+
+  if (result.disabled) {
+  return res.render('login', { error: 'This account has been disabled.' });
+}
+
 });
 
 router.get('/logout', function (req, res, next) {

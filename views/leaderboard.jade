@@ -27,7 +27,11 @@ block content
                                         .rank-badge.bronze 🥉 #{index + 1}
                                     else
                                         .rank-badge #{index + 1}
-                                td.player #{entry.Username}
+                                td.player
+                                    span #{entry.Username}
+                                    if entry.Role
+                                        - var roleClass = 'role-' + entry.Role.toLowerCase()
+                                        span(class='role-badge ' + roleClass)= entry.Role
                                 td.score #{entry.Score}/#{entry.QuestionsAnswered}
                                 td.questions #{entry.QuestionsAnswered}
                                 td.percentage #{Math.round((entry.Score / entry.QuestionsAnswered) * 100)}%

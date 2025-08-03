@@ -1,13 +1,24 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  if user
-    p You are logged in as: #{user.username}
-    if user.roles[0] == 'admin'
-      p admin
-    else if user.roles[0] == 'user'
-      p stinky user
-  else
-    p Please #[a(href="/u/login") Login] to play
+  .container
+    h1= title
+    p Welcome to #{title}
+
+    if user
+      p You are logged in as: #{user.username}
+
+      - var roleMap = { 'A': 'Admin', 'P': 'Player', 'T': 'Tester' }
+      strong Role:
+      if user.roles && user.roles.length > 0
+        - var code = user.roles[0]
+        - var roleClass = 'role-' + code.toLowerCase()
+        - var roleLabel = roleMap[code] || code
+        span(class='role-badge ' + roleClass)= roleLabel
+      else
+        span Unknown
+
+
+    else
+      p Please #[a(href="/u/login") Login] to play
+

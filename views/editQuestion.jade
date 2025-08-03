@@ -1,33 +1,34 @@
 extends layout
 
 block content
-    h1 Edit Question
-    
-    if error != ''
-        .error-message= error
-    
-    .edit-question-form
-        form(method='POST', action=`/a/editQuestion/${question.QuestionId}`)
-            .form-group
-                label(for='questionText') Question:
-                textarea(name='questionText', id='questionText', rows='3', cols='50', required)= question.QuestionText
-            
-            .form-group
-                label(for='correctAnswer') Correct Answer:
-                input(type='text', name='correctAnswer', id='correctAnswer', required, value=question.CorrectAnswer)
-            
-            .form-group
-                label(for='incorrectAnswer1') Incorrect Answer 1:
-                input(type='text', name='incorrectAnswer1', id='incorrectAnswer1', required, value=question.IncorrectAnswer1)
-            
-            .form-group
-                label(for='incorrectAnswer2') Incorrect Answer 2:
-                input(type='text', name='incorrectAnswer2', id='incorrectAnswer2', required, value=question.IncorrectAnswer2)
-            
-            .form-group
-                label(for='incorrectAnswer3') Incorrect Answer 3:
-                input(type='text', name='incorrectAnswer3', id='incorrectAnswer3', required, value=question.IncorrectAnswer3)
-            
-            .form-actions
-                input(type='submit', value='Update Question', class='btn-primary')
-                a(href='/q/viewQuestions', class='btn-secondary') Cancel
+    .container
+        h1 Edit Question
+        
+        if error != ''
+            .error-message= error
+        
+        .edit-question-form
+            form(method='POST', action=`/a/editQuestion/${question.QuestionId}`)
+                .form-group
+                    label(for='questionText') Question:
+                    textarea(name='questionText', id='questionText', rows='3', cols='50', required)= question.QuestionText
+                
+                .form-group
+                    label(for='correctAnswer') Correct Answer:
+                    input(type='text', name='correctAnswer', id='correctAnswer', required, value=question.CorrectAnswer)
+                
+                .form-group
+                    label(for='incorrectAnswer1') Incorrect Answer 1:
+                    input(type='text', name='incorrectAnswer1', id='incorrectAnswer1', required, value=question.IncorrectAnswer1)
+                
+                .form-group
+                    label(for='incorrectAnswer2') Incorrect Answer 2:
+                    input(type='text', name='incorrectAnswer2', id='incorrectAnswer2', required, value=question.IncorrectAnswer2)
+                
+                .form-group
+                    label(for='incorrectAnswer3') Incorrect Answer 3:
+                    input(type='text', name='incorrectAnswer3', id='incorrectAnswer3', required, value=question.IncorrectAnswer3)
+                
+                .form-actions
+                    input(type='submit', value='Update Question', class='btn-primary')
+                    a(href='/q/viewQuestions', class='btn-secondary') Cancel

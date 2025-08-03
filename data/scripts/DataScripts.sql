@@ -32,10 +32,11 @@ insert into UserRoles (UserId, RoleId) values (@userId, @roleId);
 -- select * from roles;
 -- select * from userroles;
 
-select u.userid, u.username, r.role
-from users u 
-	left join userroles ur on u.userid = ur.userid
-	left join roles r on r.roleid = ur.roleid;
+SELECT u.userId, u.username, u.password, r.role, u.disabled
+FROM users u
+LEFT JOIN userroles ur ON u.userId = ur.userId
+LEFT JOIN roles r ON r.roleId = ur.roleId;
+
 
 -- Insert sample trivia questions
 insert into Questions (QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3)

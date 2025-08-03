@@ -1,20 +1,38 @@
 extends layout
 
 block content
-  h1 Profile
-  label Username: #{user.username}
-  br
-  h2 Change your password
-  if error != ''
-    label(class='error') #{error}
-  form(action='profile', method='post')
-    label Current Password:
-    input(type='password', name='currentPassword')
-    <br>
-    label New Password:
-    input(type='password', name='newPassword')
-    <br>
-    label Confirm Password:
-    input(type='password', name='confirmPassword')
-    <br>
-    input(type='submit', value='Update Password')
+  .container
+    h1 Profile
+
+    label Username: #{user.username}
+    br
+
+    - var roleMap = { 'A': 'Admin', 'P': 'Player', 'T': 'Tester' }
+    strong Role:
+    if user.roles && user.roles.length > 0
+      - var code = user.roles[0]
+      - var roleClass = 'role-' + code.toLowerCase()
+      - var roleLabel = roleMap[code] || code
+      span(class='role-badge ' + roleClass)= roleLabel
+    else
+      span Unknown
+
+
+    h2 Change your password
+    if error != ''
+      label(class='error') #{error}
+
+    form(action='profile', method='post')
+      label Current Password:
+      input(type='password', name='currentPassword')
+      br
+
+      label New Password:
+      input(type='password', name='newPassword')
+      br
+
+      label Confirm Password:
+      input(type='password', name='confirmPassword')
+      br
+
+      input(type='submit', value='Update Password')

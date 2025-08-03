@@ -124,3 +124,20 @@ exports.promoteUser = function (userId) {
 exports.demoteUser = function (userId) {
     return sqlDAL.demoteUser(userId);
 }
+
+/**
+ * 
+ * @param {*} userId 
+ * @returns disables the user matching the userId
+ */
+exports.disableUser = function (userId) {
+    return sqlDAL.disableUser(userId);
+}
+/**
+ * 
+ * @param {*} userId 
+ * @returns enables the user matching the userId
+ */
+exports.enableUser = function (userId) {
+    return sqlDAL.enableUser(userId);
+}

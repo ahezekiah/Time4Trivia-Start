@@ -1,35 +1,36 @@
 extends layout
 
 block content
-    h1 Add A Question Here
-    
-    if success != ''
-        .success-message= success
-    
-    if error != ''
-        .error-message= error
-    
-    form(method='POST', action='/q/addQuestions')
-        div
-            label(for='questionText') Question:
-            textarea(name='questionText', id='questionText', rows='3', cols='50', required, placeholder='Enter your trivia question here...')
+    .container
+        h1 Add A Question Here
         
-        div
-            label(for='correctAnswer') Correct Answer:
-            input(type='text', name='correctAnswer', id='correctAnswer', required, placeholder='Enter the correct answer')
+        if success != ''
+            .success-message= success
         
-        div
-            label(for='incorrectAnswer1') Incorrect Answer 1:
-            input(type='text', name='incorrectAnswer1', id='incorrectAnswer1', required, placeholder='Enter first incorrect answer')
+        if error != ''
+            .error-message= error
         
-        div
-            label(for='incorrectAnswer2') Incorrect Answer 2:
-            input(type='text', name='incorrectAnswer2', id='incorrectAnswer2', required, placeholder='Enter second incorrect answer')
-        
-        div
-            label(for='incorrectAnswer3') Incorrect Answer 3:
-            input(type='text', name='incorrectAnswer3', id='incorrectAnswer3', required, placeholder='Enter third incorrect answer')
-        
-        div
-            input(type='submit', value='Add Question')
-            a(href='/q/viewQuestions') View All Questions
+        form(method='POST', action='/q/addQuestions')
+            div
+                label(for='questionText') Question:
+                textarea(name='questionText', id='questionText', rows='3', cols='50', required, placeholder='Enter your trivia question here...')
+            
+            div
+                label(for='correctAnswer') Correct Answer:
+                input(type='text', name='correctAnswer', id='correctAnswer', required, placeholder='Enter the correct answer')
+            
+            div
+                label(for='incorrectAnswer1') Incorrect Answer 1:
+                input(type='text', name='incorrectAnswer1', id='incorrectAnswer1', required, placeholder='Enter first incorrect answer')
+            
+            div
+                label(for='incorrectAnswer2') Incorrect Answer 2:
+                input(type='text', name='incorrectAnswer2', id='incorrectAnswer2', required, placeholder='Enter second incorrect answer')
+            
+            div
+                label(for='incorrectAnswer3') Incorrect Answer 3:
+                input(type='text', name='incorrectAnswer3', id='incorrectAnswer3', required, placeholder='Enter third incorrect answer')
+            
+            div
+                input(type='submit', value='Add Question')
+                a(href='/q/viewQuestions') View All Questions

@@ -673,4 +673,67 @@ exports.deleteQuestion = async function(questionId) {
     }
 };
 
+//DISABLE USER
+/**
+ * Disable a user account by ID with secure parameterized query
+ * @param {number} userId - User ID
+ * @returns {Promise<Object>} Result object with status and message
+ */
+exports.disableUser = async function(userId) {
+    const con = await mysql.createConnection(sqlConfig);
+    let result = new Result();
+
+    try {
+        let sql = `UPDATE Users SET Disabled = 1 WHERE UserId = ?`;
+        const [updateResult] = await con.query(sql, [userId]);
+
+        if (updateResult.affectedRows > 0) {
+            result.status = STATUS_CODES.success;
+            result.message = 'User account disabled successfully';
+        } else {
+            result.status = STATUS_CODES.failure;
+            result.message = 'User not found';
+        }
+        return result;
+    } catch (err) {
+        console.log(err);
+        result.status = STATUS_CODES.failure;
+        result.message = err.message;
+        return result;
+    } finally {
+        await con.end();
+    }
+}
+
+/**
+ * Enable a user account by ID with secure parameterized query
+ * @param {number} userId - User ID
+ * @returns {Promise<Object>} Result object with status and message
+ */
+exports.enableUser = async function(userId) {
+    const con = await mysql.createConnection(sqlConfig);
+    let result = new Result();
+
+    try {
+        let sql = `UPDATE Users SET Disabled = 0 WHERE UserId = ?`;
+        const [updateResult] = await con.query(sql, [userId]);
+
+        if (updateResult.affectedRows > 0) {
+            result.status = STATUS_CODES.success;
+            result.message = 'User account enabled successfully';
+        } else {
+            result.status = STATUS_CODES.failure;
+            result.message = 'User not found';
+        }
+        return result;
+    } catch (err) {
+        console.log(err);
+        result.status = STATUS_CODES.failure;
+        result.message = err.message;
+        return result;
+    } finally {
+        await con.end();
+    }
+}
+
 exports.secureSecret = secureSecret;

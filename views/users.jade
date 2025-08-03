@@ -1,20 +1,30 @@
 extends layout
 
 block content
-  h1 Users
-  div(class="userContainer")
-    each user in users 
-      div(class='userBox')
-        h2 Username: #{user.username}
-        div Password: #{user.password}
+  .container
+    h1 Users
+    div(class="userContainer")
+      each user in users 
+        div(class='userBox')
+          h2 Username: #{user.username}
+          div Password: #{user.password}
           div
-            span
-              b Role: &nbsp;
-            span #{user.roles[0]}
-          div
-            a(href='/a/delete/' + user.userId) remove
-          div
-            if user.roles[0] == "user"
-              a(href='/a/promote/' + user.userId) promote
+            strong Role:
+            if user.role
+              span(class='role-badge role-' + user.role.toLowerCase())= user.role.toUpperCase()
             else
-              a(href='/a/demote/' + user.userId) demote          
+              | Unknown
+          div
+            a(href='/a/delete/' + user.userId) Remove Account
+          div
+            if user.roles[0] !== 'A'
+              a(href='/a/promote/' + user.userId) Promote Account
+            if user.roles[0] !== 'P'
+              a(href='/a/demote/' + user.userId) Demote Account
+          div
+            if user.disabled
+              a(href='/a/enable/' + user.userId) Enable Account
+            else
+              a(href='/a/disable/' + user.userId) Disable Account
+
+
