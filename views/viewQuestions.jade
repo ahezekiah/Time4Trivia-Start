@@ -15,8 +15,7 @@ block content
                         br
                         if question.user
                             strong Author Role:
-                            - var roleClass = 'role-' + question.user.role.toLowerCase()
-                            span(class='role-badge ' + roleClass)= question.user.role
+                            span(class='role-badge role-' + question.user.role.toLowerCase())= question.user.role
                         .answers
                             p 
                                 strong Correct Answer: 

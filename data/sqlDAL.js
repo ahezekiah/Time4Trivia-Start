@@ -18,7 +18,7 @@ const pool = mysql.createPool({
     database: 'Time4Trivia',
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
 });
 
 // Secure session configuration

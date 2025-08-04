@@ -71,33 +71,31 @@ exports.updateUserPassword = async function (userId, currentPassword, newPasswor
  */
 
 
-exports.login = async (req, res) => {
-    try {
-        const { username, password } = req.body;
-
-        if (!username || !password) {
-        return res.status(400).json({ message: 'Username and password required.' });
-        }
-
-        const user = await sqlDAL.getUserByUsername(username);
-        if (!user) {
-        return res.status(401).json({ message: 'User not found or disabled.' });
-        }
-
-        const passwordMatch = await bcrypt.compare(password, user.Password);
-        if (!passwordMatch) {
-        return res.status(401).json({ message: 'Incorrect password.' });
-        }
-
-        // ✅ Success
-        return res.redirect('/index');
-
-
-    } catch (err) {
-        console.error('Login error:', err);
-        return res.status(500).json({ error: 'Login failed.' });
+exports.login = async function (username, password) {
+    if (!username || !password) {
+        return { status: STATUS_CODES.failure, message: 'Username and password required.' };
     }
+
+    const user = await sqlDAL.getUserByUsername(username);
+    if (!user) {
+        return { status: STATUS_CODES.failure, message: 'User not found or disabled.' };
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.Password);
+    if (!passwordMatch) {
+        return { status: STATUS_CODES.failure, message: 'Incorrect password.' };
+    }
+
+    return {
+        status: STATUS_CODES.success,
+        data: {
+            userId: user.UserID,
+            username: user.Username,
+            roles: [user.Role]
+        }
+    };
 };
+
 
 /**
  * 

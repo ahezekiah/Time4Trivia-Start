@@ -28,28 +28,26 @@ router.get('/login', function (req, res, next) {
 });
 
 router.post('/login', async function (req, res, next) {
-  // Need to get the posted username and password
   let username = req.body.username;
   let password = req.body.password;
 
   let result = await userController.login(username, password);
 
   if (result?.status == STATUS_CODES.success) {
-    if (result.data.disabled) {
-      return res.render('login', { error: 'This account has been disabled.' });
-    }
-
-    req.session.user = {
-      userId: result.data.userId,
+    req.session.user = { 
+      userId: result.data.userId, 
       username: result.data.username,
-      role: result.data.roles // ✅ this is important
+      roles: result.data.roles
     };
-
     return res.redirect('/');
   } else {
-    res.render('login', { title: 'Time 4 Trivia', error: 'Invalid Login. Please try again.' });
+    return res.render('login', { 
+      title: 'Time 4 Trivia', 
+      error: result.message || 'Invalid Login. Please try again.'
+    });
   }
 });
+
 
 // router.post('/login', userController.login);
 
