@@ -7,16 +7,12 @@ block content
     label Username: #{user.username}
     br
 
-    - var roleMap = { 'A': 'Admin', 'P': 'Player', 'T': 'Tester' }
-    strong Role:
-    if user.roles && user.roles.length > 0
-      - var code = user.roles[0]
-      - var roleClass = 'role-' + code.toLowerCase()
-      - var roleLabel = roleMap[code] || code
-      span(class='role-badge ' + roleClass)= roleLabel
-    else
-      span Unknown
-
+    div
+      strong Role:
+      if user.role
+        span(class="role-badge role-" + user.role)= user.role.toUpperCase()
+      else
+        span Unknown Role
 
     h2 Change your password
     if error != ''

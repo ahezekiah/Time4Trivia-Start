@@ -680,30 +680,8 @@ exports.deleteQuestion = async function(questionId) {
  * @returns {Promise<Object>} Result object with status and message
  */
 exports.disableUser = async function(userId) {
-    const con = await mysql.createConnection(sqlConfig);
-    let result = new Result();
-
-    try {
-        let sql = `UPDATE Users SET Disabled = 1 WHERE UserId = ?`;
-        const [updateResult] = await con.query(sql, [userId]);
-
-        if (updateResult.affectedRows > 0) {
-            result.status = STATUS_CODES.success;
-            result.message = 'User account disabled successfully';
-        } else {
-            result.status = STATUS_CODES.failure;
-            result.message = 'User not found';
-        }
-        return result;
-    } catch (err) {
-        console.log(err);
-        result.status = STATUS_CODES.failure;
-        result.message = err.message;
-        return result;
-    } finally {
-        await con.end();
-    }
-}
+    await pool.query('UPDATE Users SET disabled = 1 WHERE userId = ?', [userId]);
+};
 
 /**
  * Enable a user account by ID with secure parameterized query
@@ -711,29 +689,21 @@ exports.disableUser = async function(userId) {
  * @returns {Promise<Object>} Result object with status and message
  */
 exports.enableUser = async function(userId) {
-    const con = await mysql.createConnection(sqlConfig);
-    let result = new Result();
+    await pool.query('UPDATE Users SET disabled = 0 WHERE userId = ?', [userId]);
+};
 
-    try {
-        let sql = `UPDATE Users SET Disabled = 0 WHERE UserId = ?`;
-        const [updateResult] = await con.query(sql, [userId]);
+exports.updateUserRole = async function (userId, newRole) {
+    const roleIdResult = await pool.query(
+        'SELECT roleId FROM Roles WHERE role = ?',
+        [newRole]
+    );
+    const roleId = roleIdResult[0]?.roleId;
+    if (!roleId) throw new Error("Role not found");
 
-        if (updateResult.affectedRows > 0) {
-            result.status = STATUS_CODES.success;
-            result.message = 'User account enabled successfully';
-        } else {
-            result.status = STATUS_CODES.failure;
-            result.message = 'User not found';
-        }
-        return result;
-    } catch (err) {
-        console.log(err);
-        result.status = STATUS_CODES.failure;
-        result.message = err.message;
-        return result;
-    } finally {
-        await con.end();
-    }
-}
+    await pool.query(
+        'UPDATE UserRoles SET roleId = ? WHERE userId = ?',
+        [roleId, userId]
+    );
+};
 
 exports.secureSecret = secureSecret;

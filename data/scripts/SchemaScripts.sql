@@ -33,9 +33,11 @@ create table if not exists Roles(
 	CONSTRAINT Roles_UniqueRole UNIQUE(Role)
 );
 
+
+
 create table if not exists UserRoles(
-	UserId int,
-	RoleId int,
+	UserId int NOT NULL,
+	RoleId int NOT NULL,
 	PRIMARY KEY (UserId, RoleId),
     foreign key (UserId) references Users(UserId),
     foreign key (RoleId) references Roles(RoleId)

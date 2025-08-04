@@ -69,25 +69,59 @@ exports.updateUserPassword = async function (userId, currentPassword, newPasswor
  * @param {*} password 
  * @returns The result of the login attempt
  */
+// exports.login = async function (username, password) {
+//     // console.log(`Logging in with username ${username}`);
+
+//     // Get User by Username
+//     let user = await sqlDAL.getUserByUsername(username);
+
+//     if (!user) return new Result(STATUS_CODES.failure, 'Invalid Login.');
+
+//     let passwordsMatch = await bcrypt.compare(password, user.password); // does the given password match the user's hashed password?
+
+//     if (passwordsMatch) {
+//         // console.log('Successful login for ' + username);
+//         // console.log(user);
+
+//         return new Result(STATUS_CODES.success, 'Valid Login.', user);
+//     } else {
+//         return new Result(STATUS_CODES.failure, 'Invalid Login.');
+//     }
+// }
+
+
 exports.login = async function (username, password) {
-    // console.log(`Logging in with username ${username}`);
+    const [userRows] = await pool.query(
+        'SELECT * FROM Users WHERE username = ?',
+        [username]
+    );
 
-    // Get User by Username
-    let user = await sqlDAL.getUserByUsername(username);
+    if (userRows.length === 0) return { status: STATUS_CODES.notfound };
 
-    if (!user) return new Result(STATUS_CODES.failure, 'Invalid Login.');
+    const user = userRows[0];
 
-    let passwordsMatch = await bcrypt.compare(password, user.password); // does the given password match the user's hashed password?
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) return { status: STATUS_CODES.unauthorized };
 
-    if (passwordsMatch) {
-        // console.log('Successful login for ' + username);
-        // console.log(user);
+    // 🛠️ FETCH ROLE HERE:
+    const [roleRows] = await pool.query(`
+        SELECT r.role
+        FROM Roles r
+        JOIN UserRoles ur ON r.roleId = ur.roleId
+        WHERE ur.userId = ?
+    `, [user.userId]);
 
-        return new Result(STATUS_CODES.success, 'Valid Login.', user);
-    } else {
-        return new Result(STATUS_CODES.failure, 'Invalid Login.');
-    }
-}
+    return {
+        status: STATUS_CODES.success,
+        data: {
+        userId: user.userId,
+        username: user.username,
+        role: roleRows[0]?.role || 'user', // ✅ Singular
+        disabled: user.disabled
+        }
+    };
+};
+
 
 /**
  * 
@@ -112,8 +146,8 @@ exports.deleteUserById = function (userId) {
  * @param {*} userId 
  * @returns promotes the user matching the userId
  */
-exports.promoteUser = function (userId) {
-    return sqlDAL.promoteUser(userId);
+exports.promoteUser = async function (userId) {
+    return sqlDAL.promoteUser(userId, 'admin');
 }
 
 /**
@@ -121,8 +155,8 @@ exports.promoteUser = function (userId) {
  * @param {*} userId 
  * @returns promotes the user matching the userId
  */
-exports.demoteUser = function (userId) {
-    return sqlDAL.demoteUser(userId);
+exports.demoteUser = async function (userId) {
+    return sqlDAL.demoteUser(userId, 'user');
 }
 
 /**
@@ -130,7 +164,7 @@ exports.demoteUser = function (userId) {
  * @param {*} userId 
  * @returns disables the user matching the userId
  */
-exports.disableUser = function (userId) {
+exports.disableUser = async function (userId) {
     return sqlDAL.disableUser(userId);
 }
 /**
@@ -138,6 +172,6 @@ exports.disableUser = function (userId) {
  * @param {*} userId 
  * @returns enables the user matching the userId
  */
-exports.enableUser = function (userId) {
+exports.enableUser = async function (userId) {
     return sqlDAL.enableUser(userId);
 }

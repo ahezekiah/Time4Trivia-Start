@@ -29,6 +29,7 @@ var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
 var gameRouter = require('./routes/game');
 var questionsRouter = require('./routes/questions');
+var authMiddleware = require('./middleware/auth');
 
 var app = express();
 
@@ -50,6 +51,7 @@ app.use('/u', usersRouter);
 app.use('/a', adminRouter);
 app.use('/g', gameRouter);
 app.use('/q', questionsRouter);
+app.use(authMiddleware);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

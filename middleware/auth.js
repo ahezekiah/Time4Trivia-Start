@@ -40,3 +40,10 @@ exports.requireQuestionEdit = function(req, res, next) {
     
     next();
 };
+
+module.exports((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    next();
+});
+
+

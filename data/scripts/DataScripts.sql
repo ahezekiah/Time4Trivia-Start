@@ -10,6 +10,16 @@ insert into Users (username, password, email, firstname, lastname)
 insert into Users (username, password, email, firstname, lastname)
 	values ('phil', '$2b$10$GlNz68MNngzHKC1Vc4FaDu2zRGnFqXvt3Q69ke1OAnJF9Ml1l/jBm', 'phil@gmail.com', 'Phil', 'Philerton');
 
+-- -- Insert a user
+-- INSERT INTO Users (username, password) VALUES ('admin1', 'hashedpass');
+
+-- -- Then assign the role
+-- INSERT INTO UserRoles (userId, roleId)
+-- SELECT u.userId, r.roleId
+-- FROM Users u, Roles r
+-- WHERE u.username = 'admin1' AND r.role = 'admin';
+
+
 insert into Roles (Role, RoleDescription) 
 	values ('user', 'standard user role');
 insert into Roles (Role, RoleDescription) 
@@ -36,6 +46,12 @@ SELECT u.userId, u.username, u.password, r.role, u.disabled
 FROM users u
 LEFT JOIN userroles ur ON u.userId = ur.userId
 LEFT JOIN roles r ON r.roleId = ur.roleId;
+
+
+SELECT u.username, r.role
+FROM Users u
+JOIN UserRoles ur ON u.userId = ur.userId
+JOIN Roles r ON ur.roleId = r.roleId;
 
 
 -- Insert sample trivia questions
