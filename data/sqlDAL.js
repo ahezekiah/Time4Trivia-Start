@@ -102,7 +102,7 @@ async function getAllUsers() {
 //     }
 // };
 async function getUsers() {
-    const query = `SELECT UserID, Username, Password, Role FROM Users`;
+    const query = `SELECT UserID, Username, Password, Email, FirstName, LastName, Role FROM Users`;
     const [results] = await pool.query(query);
     return results;
 }

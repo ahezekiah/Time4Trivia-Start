@@ -44,6 +44,8 @@ console.log('Login result:', result);
   if (result.status === STATUS_CODES.success) {
     req.session.user = {
       userId: result.data.userId,
+      firstname: result.data.firstname,
+      lastname: result.data.lastname,
       username: result.data.username,
       role: result.data.role
     };

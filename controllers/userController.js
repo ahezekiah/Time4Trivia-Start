@@ -134,6 +134,8 @@ exports.login = async function (username, password) {
             status: STATUS_CODES.success,
             data: {
                 userId: user.UserId,
+                firstname: user.FirstName,
+                lastname: user.LastName,
                 username: user.Username,
                 role: user.Role
             }
