@@ -474,6 +474,11 @@ exports.getRandomQuestions = async function(count = 10) {
     }
 };
 
+exports.getRandomQuestions = async () => {
+  return await m.query("SELECT * FROM Questions ORDER BY RAND() LIMIT 10");
+};
+
+
 /**
  * Save a user's game score to the database with secure parameterized query
  * @param {number} userId - User ID

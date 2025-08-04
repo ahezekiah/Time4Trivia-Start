@@ -72,50 +72,59 @@ exports.updateUserPassword = async function (userId, currentPassword, newPasswor
 
 
 exports.login = async function (username, password) {
-    // const query = `
-    //     SELECT u.UserId, u.Username, u.Password, u.Enabled, r.Role
-    //     FROM Users u
-    //     LEFT JOIN UserRoles ur ON u.UserId = ur.UserId
-    //     LEFT JOIN Roles r ON ur.RoleId = r.RoleId
-    //     WHERE u.Username = ?
-    // `;
     try {
         console.log('Attempting login with:', username, password);
-        const [rows] = await sqlDAL.query(
-        'SELECT * FROM users WHERE username = ? AND password = ?',
-        [username, password]
-    );
 
-    if (!rows || rows.length === 0) {
-        return { status: STATUS_CODES.failure };
-    }
+        const result = await sqlDAL.query('SELECT * FROM users WHERE username = ?', [username]);
+        const rows = Array.isArray(result) ? result[0] : result; // Normalize
+        
 
-    const user = rows[0];
-    const passwordMatch = await bcrypt.compare(password, user.Password);
-    if (!passwordMatch) return { status: STATUS_CODES.failure, message: 'Invalid username or password.' };
-
-    if (!user.Enabled !== 1) return { status: STATUS_CODES.disabled, message: 'This account has been disabled.' };
-
-    
-console.log('Query result rows:', rows);
-
-
-    return {
-        status: STATUS_CODES.success,
-        data: {
-            userId: user.UserId,
-            username: user.Username,
-            role: user.Role
+        if (!rows || rows.length === 0) {
+            console.log('No user found with username');
+            return { status: STATUS_CODES.failure };
         }
-    };
-    
+        
+        const user = Array.isArray(rows) ? rows[0] : rows;
+        if (!user || !user.Password) {
+            console.log('No valid user or password returned');
+            return { status: STATUS_CODES.failure, message: 'Invalid credentials' };
+        }
+
+        console.log('Fixed user:', user);
+        console.log('Comparing password:', password);
+        console.log('Against hash:', user.Password);
+
+        const passwordMatch = await bcrypt.compare(password, user.Password);
+
+        if (!passwordMatch) {
+            console.log('Password does not match');
+            return { status: STATUS_CODES.failure };
+        }
+
+        if (user.Enabled !== 1) {
+            return { status: STATUS_CODES.disabled };
+        }
+
+        if (!user) {
+            console.log('User not found');
+            return { status: STATUS_CODES.failure };
+        }
+
+        return {
+            status: STATUS_CODES.success,
+            data: {
+                userId: user.UserId,
+                username: user.Username,
+                role: user.Role
+            }
+        };
+
     } catch (error) {
         console.error('Error during login:', error);
         return { status: STATUS_CODES.failure, message: 'An error occurred during login.' };
     }
-
-    
 };
+
 
 
 /**
@@ -141,9 +150,10 @@ exports.deleteUserById = function (userId) {
  * @param {*} userId 
  * @returns promotes the user matching the userId
  */
-exports.promoteUser = async function (userId) {
-    return sqlDAL.promoteUser(userId, 'admin');
-}
+exports.promoteUser = async (userId, newRole) => {
+  return await sqlDAL.query("UPDATE Users SET Role = ? WHERE UserId = ?", [newRole, userId]);
+};
+
 
 /**
  * 
@@ -171,15 +181,15 @@ exports.enableUser = async function (userId) {
     return sqlDAL.enableUser(userId);
 }
 
-module.exports = {
-    getUsers: exports.getUsers,
-    createUser: exports.createUser,
-    updateUserPassword: exports.updateUserPassword,
-    login: exports.login,
-    getUserById: exports.getUserById,   
-    deleteUserById: exports.deleteUserById,
-    promoteUser: exports.promoteUser,
-    demoteUser: exports.demoteUser,
-    disableUser: exports.disableUser,
-    enableUser: exports.enableUser
-};
+// module.exports = {
+//     getUsers: exports.getUsers,
+//     createUser: exports.createUser,
+//     updateUserPassword: exports.updateUserPassword,
+//     login: exports.login,
+//     getUserById: exports.getUserById,   
+//     deleteUserById: exports.deleteUserById,
+//     promoteUser: exports.promoteUser,
+//     demoteUser: exports.demoteUser,
+//     disableUser: exports.disableUser,
+//     enableUser: exports.enableUser
+// };

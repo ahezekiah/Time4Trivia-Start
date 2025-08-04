@@ -27,7 +27,7 @@ block content
             a(href='/a/delete/' + user.userId) Remove
 
           div
-            if currentUserRole == 'admin'
+            if user.role === 'admin'
               if user.role != 'admin'
                 a(href='/a/promote/' + user.userId) Promote
               if user.role != 'user'

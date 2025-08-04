@@ -51,17 +51,18 @@ insert into UserRoles (UserId, RoleId) values (@userId, @roleId);
 -- LEFT JOIN roles r ON r.roleId = ur.roleId;
 
 
-SELECT u.username, r.role
-FROM Users u
-JOIN UserRoles ur ON u.userId = ur.userId
-JOIN Roles r ON ur.roleId = r.roleId;
+-- SELECT u.username, r.role
+-- FROM Users u
+-- JOIN UserRoles ur ON u.userId = ur.userId
+-- JOIN Roles r ON ur.roleId = r.roleId;
 
-UPDATE Users SET Enabled = 1 WHERE username = 'admin';
+-- UPDATE Users SET Enabled = 1 WHERE username = 'admin';
 
-UPDATE users
-SET Password = '$2b$10$mHjVeTfQTMV1hJLa1dugC.fWvEKO3VHyoZdjKrz5U1Tn.fW8BWZKi'
-WHERE Username = 'admin';
+-- UPDATE users
+-- SET Password = '$2b$10$mHjVeTfQTMV1hJLa1dugC.fWvEKO3VHyoZdjKrz5U1Tn.fW8BWZKi'
+-- WHERE Username = 'admin';
 
+-- SELECT q.QuestionID, q.QuestionText, q.CorrectAnswer FROM Questions q;
 
 -- SELECT * FROM Users WHERE Username = ? AND Enabled = 1
 -- UPDATE Users SET Enabled = 1;
