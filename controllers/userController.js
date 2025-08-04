@@ -90,38 +90,69 @@ exports.updateUserPassword = async function (userId, currentPassword, newPasswor
 // }
 
 
-exports.login = async function (username, password) {
-    const [userRows] = await pool.query(
-        'SELECT * FROM Users WHERE username = ?',
+// exports.login = async function (username, password) {
+//     const userRows = await sqlDAL.query('SELECT * FROM Users WHERE username = ?', [username]);
+//     if (userRows.length === 0) return { status: STATUS_CODES.notfound };
+
+//     const user = userRows[0];
+//     const passwordMatch = await bcrypt.compare(password, user.password);
+//     if (!passwordMatch) return { status: STATUS_CODES.unauthorized };
+
+//     const roleRows = await sqlDAL.query(`
+//         SELECT r.role FROM Roles r
+//         JOIN UserRoles ur ON ur.roleId = r.roleId
+//         WHERE ur.userId = ?
+//     `, [user.userId]);
+
+//     return {
+//             status: STATUS_CODES.success,
+//             data: {
+//             userId: user.userId,
+//             username: user.username,
+//             role: roleRows[0]?.role || 'user',
+//             disabled: user.disabled
+//         }
+//     };
+// };
+
+exports.login = async function(username, password) {
+    try {
+        const [rows] = await sqlDAL.query(
+        'SELECT * FROM Users WHERE Username = ? AND Enabled = 1',
         [username]
-    );
+        );
 
-    if (userRows.length === 0) return { status: STATUS_CODES.notfound };
-
-    const user = userRows[0];
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) return { status: STATUS_CODES.unauthorized };
-
-    // 🛠️ FETCH ROLE HERE:
-    const [roleRows] = await pool.query(`
-        SELECT r.role
-        FROM Roles r
-        JOIN UserRoles ur ON r.roleId = ur.roleId
-        WHERE ur.userId = ?
-    `, [user.userId]);
-
-    return {
-        status: STATUS_CODES.success,
-        data: {
-        userId: user.userId,
-        username: user.username,
-        role: roleRows[0]?.role || 'user', // ✅ Singular
-        disabled: user.disabled
+        if (!rows || rows.length === 0) {
+        return { status: 'error', message: 'User not found or disabled' };
         }
-    };
-};
 
+        const user = rows[0];
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+        return { status: 'error', message: 'Incorrect password' };
+        }
+
+        // Now fetch roles if you're using roles
+        const [roleRows] = await pool.query(
+        'SELECT Role FROM UserRoles WHERE UserID = ?',
+        [user.UserID]
+        );
+        const roles = roleRows.map(r => r.Role);
+
+        return {
+        status: 'success',
+        data: {
+            userId: user.UserID,
+            username: user.Username,
+            roles: roles
+        }
+        };
+    } catch (error) {
+        console.error('Login error:', error);
+        return { status: 'error', message: 'Internal server error' };
+    }
+};
 
 /**
  * 

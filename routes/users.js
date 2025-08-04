@@ -35,20 +35,20 @@ router.post('/login', async function (req, res, next) {
   let result = await userController.login(username, password);
 
   if (result?.status == STATUS_CODES.success) {
-  if (result.data.disabled) {
-    return res.render('login', { error: 'This account has been disabled.' });
+    if (result.data.disabled) {
+      return res.render('login', { error: 'This account has been disabled.' });
+    }
+
+    req.session.user = {
+      userId: result.data.userId,
+      username: result.data.username,
+      role: result.data.roles // ✅ this is important
+    };
+
+    return res.redirect('/');
+  } else {
+    res.render('login', { title: 'Time 4 Trivia', error: 'Invalid Login. Please try again.' });
   }
-
-  req.session.user = { 
-    userId: result.data.userId, 
-    username: result.data.username,
-    role: result.data.role // ✅ Use role not roles
-  };
-
-  res.redirect('/');
-} else {
-  res.render('login', { title: 'Time 4 Trivia', error: 'Invalid Login. Please try again.' });
-}
 });
 
 router.get('/logout', function (req, res, next) {

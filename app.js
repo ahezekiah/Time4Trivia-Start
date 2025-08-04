@@ -51,7 +51,7 @@ app.use('/u', usersRouter);
 app.use('/a', adminRouter);
 app.use('/g', gameRouter);
 app.use('/q', questionsRouter);
-app.use(authMiddleware);
+app.use(authMiddleware.attachUserToLocals);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -67,6 +67,11 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+// Use others when needed
+app.get('/admin', authMiddleware.requireAdmin, (req, res) => {
+  res.render('admin');
 });
 
 module.exports = app;

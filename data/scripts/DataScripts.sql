@@ -37,6 +37,9 @@ set @userId = (select UserId from Users where username = 'admin');
 set @roleId = (select RoleId from Roles where Role = 'admin');
 insert into UserRoles (UserId, RoleId) values (@userId, @roleId);
 
+
+
+
 -- test data
 -- select * from users;
 -- select * from roles;
@@ -52,6 +55,10 @@ SELECT u.username, r.role
 FROM Users u
 JOIN UserRoles ur ON u.userId = ur.userId
 JOIN Roles r ON ur.roleId = r.roleId;
+
+SELECT * FROM Users WHERE Username = ? AND Enabled = 1
+UPDATE Users SET Enabled = 1;
+
 
 
 -- Insert sample trivia questions

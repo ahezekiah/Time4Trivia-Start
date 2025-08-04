@@ -8,7 +8,10 @@ const sqlConfig = {
     user: 'AFGLRT',
     password: 'w0RDp4Ss',
     database: 'Time4Trivia',
-    multipleStatements: true
+    multipleStatements: true,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 };
 
 // Secure session configuration
@@ -673,37 +676,51 @@ exports.deleteQuestion = async function(questionId) {
     }
 };
 
+
+async function query(sql, params) {
+    const connection = await mysql.createConnection(sqlConfig);
+    const [results] = await connection.execute(sql, params);
+    await connection.end();
+    return results;
+}
+
 //DISABLE USER
 /**
  * Disable a user account by ID with secure parameterized query
  * @param {number} userId - User ID
  * @returns {Promise<Object>} Result object with status and message
  */
-exports.disableUser = async function(userId) {
-    await pool.query('UPDATE Users SET disabled = 1 WHERE userId = ?', [userId]);
-};
+async function disableUser(userId) {
+    const connection = await mysql.createConnection(sqlConfig);
+    await connection.execute('UPDATE Users SET disabled = true WHERE userId = ?', [userId]);
+    await connection.end();
+}
 
 /**
  * Enable a user account by ID with secure parameterized query
  * @param {number} userId - User ID
  * @returns {Promise<Object>} Result object with status and message
  */
-exports.enableUser = async function(userId) {
-    await pool.query('UPDATE Users SET disabled = 0 WHERE userId = ?', [userId]);
-};
+async function enableUser(userId) {
+    const connection = await mysql.createConnection(sqlConfig);
+    await connection.execute('UPDATE Users SET disabled = false WHERE userId = ?', [userId]);
+    await connection.end();
+}
+async function updateUserRole(userId, newRole) {
+    const connection = await mysql.createConnection(sqlConfig);
+    await connection.execute(`
+        UPDATE UserRoles SET roleId = (
+        SELECT roleId FROM Roles WHERE role = ?
+        ) WHERE userId = ?
+    `, [newRole, userId]);
+    await connection.end();
+}
 
-exports.updateUserRole = async function (userId, newRole) {
-    const roleIdResult = await pool.query(
-        'SELECT roleId FROM Roles WHERE role = ?',
-        [newRole]
-    );
-    const roleId = roleIdResult[0]?.roleId;
-    if (!roleId) throw new Error("Role not found");
-
-    await pool.query(
-        'UPDATE UserRoles SET roleId = ? WHERE userId = ?',
-        [roleId, userId]
-    );
+    module.exports = {
+    query,
+    disableUser,
+    enableUser,
+    updateUserRole
 };
 
 exports.secureSecret = secureSecret;
