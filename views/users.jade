@@ -17,7 +17,7 @@ block content
 
 
           div
-            if user.Enabled === 0
+            if user.Enabled === 1
               span(class='disabled-label') Account Disabled
               a(href='/a/enable/' + user.UserId) Enable
             else
@@ -28,9 +28,10 @@ block content
 
           div
             if user.Role === 'admin'
-              if user.Role != 'admin'
+              if user.Role !== 'admin'
                 a(href='/a/promote/' + user.UserId) Promote
-              if user.Role != 'user'
+              if user.Role !== 'user'
                 a(href='/a/demote/' + user.UserId) Demote
+                //this is wrong, it gets from the users Role, not the ACTUAL user logged in fix later, solve why user.UserID not returning id
 
 

@@ -12,8 +12,6 @@ drop table if exists Questions;
 
 
 
-SHOW COLUMNS FROM Users;
-
 
 create table if not exists Users(
 	UserId int NOT NULL AUTO_INCREMENT,

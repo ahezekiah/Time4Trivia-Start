@@ -288,7 +288,7 @@ async function promoteUser(userId) {
 // };
 
 async function demoteUser(userId) {
-    const query = `UPDATE Users SET Role = 'user' WHERE UserID = ? AND Username != 'admin'`;
+    const query = `UPDATE Users SET Role = 'user' WHERE UserID = ?, Username != 'admin'`;
     const [results] = await pool.query(query, [userId]);
     return results;
 }
@@ -332,7 +332,7 @@ async function demoteUser(userId) {
 
 async function getUserByUsername(username) {
     const [rows] = await pool.query(
-        'SELECT * FROM Users WHERE Username = ? AND Enabled = 1',
+        'SELECT * FROM Users WHERE Username = ?, Enabled = 1',
         [username]
     );
     return rows[0]; // only return first match
@@ -807,7 +807,7 @@ async function query(sql, params) {
  * @returns {Promise<Object>} Result object with status and message
  */
 async function disableUser(userId) {
-    const query = `UPDATE Users SET IsDisabled = 1 WHERE UserID = ? AND Username != 'admin'`;
+    const query = `UPDATE Users SET Enabled = 0 WHERE UserID = ?, Username != 'admin'`;
     const [results] = await pool.query(query, [userId]);
     return results;
 }
@@ -819,7 +819,7 @@ async function disableUser(userId) {
  * @returns {Promise<Object>} Result object with status and message
  */
 async function enableUser(userId) {
-    const query = `UPDATE Users SET IsDisabled = 0 WHERE UserID = ?`;
+    const query = `UPDATE Users SET Enabled = 1 WHERE UserID = ?`;
     const [results] = await pool.query(query, [userId]);
     return results;
 }
