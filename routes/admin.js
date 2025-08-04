@@ -14,8 +14,9 @@ router.get('/users', async function (req, res, next) {
   let users = await userController.getUsers(role);
 
   users = users.filter((u) => u.username != "admin");
+  console.log(users);
 
-  res.render('users', { title: 'Time 4 Trivia', user: req.session.user, isAdmin: security.isAdmin(req.session.user), users: users, currentUserRole: req.session.user.role });
+  res.render('users', { title: 'Time 4 Trivia', user: req.session.user, isAdmin: security.isAdmin(req.session.user), users: users });
 });
 
 router.get('/delete/:userId', async function (req, res, next) {
