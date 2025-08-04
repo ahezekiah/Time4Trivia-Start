@@ -22,7 +22,7 @@ exports.getUsers = async function () {
  * @param {*} password 
  * @returns a Result with status/message and the new user id as data
  */
-exports.createUser = async function (username, email, password) {
+exports.createUser = async function (username, email, password, firstname, lastname) {
     // let hashedPassword = await bcrypt.hash(password, 10);
 
     // let result = await sqlDAL.createUser(username, hashedPassword, email);
@@ -30,14 +30,18 @@ exports.createUser = async function (username, email, password) {
     // return result;
     const hashedPassword = await bcrypt.hash(password, 10);
     
+    if (!username || !email || !password || !firstname || !lastname) {
+        return { status: 'error', error: 'Missing required fields' };
+    }
+
     const query = `
-        INSERT INTO Users (Username, Password, Role, Enabled)
-        VALUES (?, ?, 'user', 1)
+        INSERT INTO Users (Username, Password, Email, FirstName, LastName, Role, Enabled)
+        VALUES (?, ?, ?, ?, ?, 'user', 1)
     `;
 
     try {
-        await sqlDAL.query(query, [username, email, hashedPassword]);
-        return { status: 'success' };
+        await sqlDAL.query(query, [username, hashedPassword, email, firstname, lastname]);
+        return { status: STATUS_CODES.success, message: 'User created successfully' };
     } catch (err) {
         console.error('Register error:', err);
         return { status: 'error', error: err };

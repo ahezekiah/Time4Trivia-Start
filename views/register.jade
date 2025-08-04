@@ -6,6 +6,12 @@ block content
         if error != ''
             label(class='error') #{error}
         form(action='/u/register', method='post')
+            label First Name:
+            input(type='text', name='firstname')
+            br
+            label Last Name:
+            input(type='text', name='lastname')
+            br
             label Username:
             input(type='text', name='username')
             br

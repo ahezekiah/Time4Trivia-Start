@@ -4,22 +4,24 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const STATUS_CODES = require('../models/statusCodes').STATUS_CODES;
 const security = require('../helpers/security');
+const e = require('express');
 
 router.get('/register', function (req, res, next) {
   res.render('register', { title: 'Time 4 Trivia', error: '' });
 });
 
 router.post('/register', async function (req, res, next) {
-  let username = req.body.username;
-  let email = req.body.email;
-  let password = req.body.password;
+  let { username, email, password, firstname, lastname } = req.body;
 
-  let result = await userController.createUser(username, email, password);
+  let result = await userController.createUser(username, email, password, firstname, lastname);
 
   if (result?.status == STATUS_CODES.success) {
     res.redirect('/u/login');
   } else {
-    res.render('register', { title: 'Time 4 Trivia', error: 'Register Failed' });
+    const errorMsg = result?.error?.code === 'ER_DUP_ENTRY'
+            ? 'Email already in use'
+            : 'Register Failed';
+    res.render('register', { title: 'Time 4 Trivia', error: errorMsg });
   }
 });
 
