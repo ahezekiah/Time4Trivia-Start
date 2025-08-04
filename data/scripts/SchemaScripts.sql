@@ -22,6 +22,7 @@ create table if not exists Users(
 	Email varchar(100) NOT NULL,
 	FirstName varchar(100) NOT NULL,
 	LastName varchar(100) NOT NULL,
+	Role varchar(100) NOT NULL,
 	Enabled BOOLEAN DEFAULT 1,
 	PRIMARY KEY (UserId),
 	CONSTRAINT Users_UniqueEmail UNIQUE(Email),

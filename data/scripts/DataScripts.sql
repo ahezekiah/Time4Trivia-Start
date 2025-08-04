@@ -3,12 +3,12 @@
 use Time4Trivia;
 
 -- Insert Initial Data
-insert into Users  (username, password, email, firstname, lastname) 
-	values ('admin', '$2b$10$8Zq3JH4WY6CRwQmitid6V.9oFlM/RKo3ATcXqGWdoXoW14SmAJ7d6', 'admin@test.com', 'admin', 'admin');
-insert into Users (username, password, email, firstname, lastname) 
-	values ('test', '$2b$10$GlNz68MNngzHKC1Vc4FaDu2zRGnFqXvt3Q69ke1OAnJF9Ml1l/jBm', 'test@test.com', 'test', 'test');
-insert into Users (username, password, email, firstname, lastname)
-	values ('phil', '$2b$10$GlNz68MNngzHKC1Vc4FaDu2zRGnFqXvt3Q69ke1OAnJF9Ml1l/jBm', 'phil@gmail.com', 'Phil', 'Philerton');
+insert into Users  (username, password, email, firstname, lastname, role, enabled) 
+	values ('admin', '$2b$10$8Zq3JH4WY6CRwQmitid6V.9oFlM/RKo3ATcXqGWdoXoW14SmAJ7d6', 'admin@test.com', 'admin', 'admin', 'admin', 1);
+insert into Users (username, password, email, firstname, lastname, role, enabled) 
+	values ('test', '$2b$10$GlNz68MNngzHKC1Vc4FaDu2zRGnFqXvt3Q69ke1OAnJF9Ml1l/jBm', 'test@test.com', 'test', 'test', 'user', 1);
+insert into Users (username, password, email, firstname, lastname, role, enabled)
+	values ('phil', '$2b$10$GlNz68MNngzHKC1Vc4FaDu2zRGnFqXvt3Q69ke1OAnJF9Ml1l/jBm', 'phil@gmail.com', 'Phil', 'Philerton', 'user', 1);
 
 -- -- Insert a user
 -- INSERT INTO Users (username, password) VALUES ('admin1', 'hashedpass');
@@ -57,6 +57,11 @@ JOIN UserRoles ur ON u.userId = ur.userId
 JOIN Roles r ON ur.roleId = r.roleId;
 
 UPDATE Users SET Enabled = 1 WHERE username = 'admin';
+
+UPDATE users
+SET Password = '$2b$10$mHjVeTfQTMV1hJLa1dugC.fWvEKO3VHyoZdjKrz5U1Tn.fW8BWZKi'
+WHERE Username = 'admin';
+
 
 -- SELECT * FROM Users WHERE Username = ? AND Enabled = 1
 -- UPDATE Users SET Enabled = 1;

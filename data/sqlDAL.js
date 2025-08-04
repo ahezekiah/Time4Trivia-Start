@@ -549,23 +549,48 @@ exports.getUserScores = async function(userId) {
  * Get all questions for viewing with secure query
  * @returns {Promise<Object[]>} Array of question objects
  */
-exports.getAllQuestions = async function() {
-    const con = await mysql.createConnection(sqlConfig);
+// exports.getAllQuestions = async function() {
+//     const con = await mysql.createConnection(sqlConfig);
     
-    try {
-        let sql = `SELECT QuestionId, QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3 
-                   FROM Questions
-                   ORDER BY QuestionId`;
+//     try {
+//         let sql = `SELECT QuestionId, QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3 
+//                    FROM Questions
+//                    ORDER BY QuestionId`;
         
-        const [results] = await con.query(sql);
-        return results;
-    } catch (err) {
-        console.log(err);
-        throw err;
-    } finally {
-        await con.end();
+//         const [results] = await con.query(sql);
+//         return results;
+//     } catch (err) {
+//         console.log(err);
+//         throw err;
+//     } finally {
+//         await con.end();
+//     }
+// };
+
+async function getAllQuestions() {
+    try {
+        const [rows] = await pool.query(`
+        SELECT q.QuestionID, q.QuestionText, q.CorrectAnswer,
+                u.Username, u.Role
+        FROM Questions q
+        JOIN Users u ON q.UserID = u.UserID
+        `);
+
+        return rows.map((row) => ({
+        questionId: row.QuestionID,
+        text: row.QuestionText,
+        correctAnswer: row.CorrectAnswer,
+        user: {
+            username: row.Username,
+            role: row.Role
+        }
+        }));
+    } catch (error) {
+        console.error('Error fetching questions:', error);
+        return [];
     }
-};
+}
+
 
 /**
  * Add a new question with secure parameterized query
@@ -738,7 +763,8 @@ async function updateUserRole(userId, newRole) {
     disableUser,
     enableUser,
     updateUserRole,
-    getUserByUsername
+    getUserByUsername,
+    getAllQuestions
 };
 
 exports.secureSecret = secureSecret;

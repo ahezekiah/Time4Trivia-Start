@@ -1,4 +1,5 @@
 exports.STATUS_CODES = {
     success: 'Success',
-    failure: 'Failure'
+    failure: 'Failure',
+    disabled: 'Disabled',
 };

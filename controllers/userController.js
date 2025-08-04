@@ -72,28 +72,49 @@ exports.updateUserPassword = async function (userId, currentPassword, newPasswor
 
 
 exports.login = async function (username, password) {
-    if (!username || !password) {
-        return { status: STATUS_CODES.failure, message: 'Username and password required.' };
+    // const query = `
+    //     SELECT u.UserId, u.Username, u.Password, u.Enabled, r.Role
+    //     FROM Users u
+    //     LEFT JOIN UserRoles ur ON u.UserId = ur.UserId
+    //     LEFT JOIN Roles r ON ur.RoleId = r.RoleId
+    //     WHERE u.Username = ?
+    // `;
+    try {
+        console.log('Attempting login with:', username, password);
+        const [rows] = await sqlDAL.query(
+        'SELECT * FROM users WHERE username = ? AND password = ?',
+        [username, password]
+    );
+
+    if (!rows || rows.length === 0) {
+        return { status: STATUS_CODES.failure };
     }
 
-    const user = await sqlDAL.getUserByUsername(username);
-    if (!user) {
-        return { status: STATUS_CODES.failure, message: 'User not found or disabled.' };
-    }
-
+    const user = rows[0];
     const passwordMatch = await bcrypt.compare(password, user.Password);
-    if (!passwordMatch) {
-        return { status: STATUS_CODES.failure, message: 'Incorrect password.' };
-    }
+    if (!passwordMatch) return { status: STATUS_CODES.failure, message: 'Invalid username or password.' };
+
+    if (!user.Enabled !== 1) return { status: STATUS_CODES.disabled, message: 'This account has been disabled.' };
+
+    
+console.log('Query result rows:', rows);
+
 
     return {
         status: STATUS_CODES.success,
         data: {
-            userId: user.UserID,
+            userId: user.UserId,
             username: user.Username,
-            roles: [user.Role]
+            role: user.Role
         }
     };
+    
+    } catch (error) {
+        console.error('Error during login:', error);
+        return { status: STATUS_CODES.failure, message: 'An error occurred during login.' };
+    }
+
+    
 };
 
 

@@ -27,25 +27,31 @@ router.get('/login', function (req, res, next) {
   res.render('login', { title: 'Time 4 Trivia', error: '' });
 });
 
-router.post('/login', async function (req, res, next) {
-  let username = req.body.username;
-  let password = req.body.password;
+router.post('/login', async function (req, res) {
+  const { username, password } = req.body;
 
-  let result = await userController.login(username, password);
+  const result = await userController.login(username, password);
+console.log('Login result:', result);
 
-  if (result?.status == STATUS_CODES.success) {
-    req.session.user = { 
-      userId: result.data.userId, 
-      username: result.data.username,
-      roles: result.data.roles
-    };
-    return res.redirect('/');
-  } else {
-    return res.render('login', { 
-      title: 'Time 4 Trivia', 
-      error: result.message || 'Invalid Login. Please try again.'
-    });
+
+
+  if (result.status === STATUS_CODES.disabled) {
+    return res.render('login', { title: 'Time 4 Trivia', error: 'This account has been disabled.' });
   }
+
+  if (result.status === STATUS_CODES.success) {
+    req.session.user = {
+      userId: result.data.userId,
+      username: result.data.username,
+      role: result.data.role
+    };
+    return res.redirect('/'); // or '/dashboard' if needed
+  }
+
+    console.log('Login query result:', result);
+    console.log('Trying login with:', username, password);
+
+  res.render('login', { title: 'Time 4 Trivia', error: 'Invalid Login. Please try again.' });
 });
 
 
@@ -81,3 +87,4 @@ router.post('/profile', async function (req, res, next) {
 });
 
 module.exports = router;
+
