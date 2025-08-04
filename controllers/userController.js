@@ -23,11 +23,6 @@ exports.getUsers = async function () {
  * @returns a Result with status/message and the new user id as data
  */
 exports.createUser = async function (username, email, password, firstname, lastname) {
-    // let hashedPassword = await bcrypt.hash(password, 10);
-
-    // let result = await sqlDAL.createUser(username, hashedPassword, email);
-
-    // return result;
     const hashedPassword = await bcrypt.hash(password, 10);
     
     if (!username || !email || !password || !firstname || !lastname) {
@@ -45,10 +40,8 @@ exports.createUser = async function (username, email, password, firstname, lastn
     } catch (err) {
         console.error('Register error:', err);
         return { status: 'error', error: err };
+    }
 }
-}
-
-
 
 /**
  * 
@@ -67,7 +60,6 @@ exports.updateUserPassword = async function (userId, currentPassword, newPasswor
     let hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
     let user = await sqlDAL.getUserById(userId);
-    // console.log(user);
 
     // If we couldn't find the user
     if (!user) {
@@ -89,8 +81,6 @@ exports.updateUserPassword = async function (userId, currentPassword, newPasswor
  * @param {*} password 
  * @returns The result of the login attempt
  */
-
-
 exports.login = async function (username, password) {
     try {
         console.log('Attempting login with:', username, password);
@@ -147,8 +137,6 @@ exports.login = async function (username, password) {
     }
 };
 
-
-
 /**
  * 
  * @param {*} userId 
@@ -172,19 +160,18 @@ exports.deleteUserById = function (userId) {
  * @param {*} userId 
  * @returns promotes the user matching the userId
  */
-exports.promoteUser = async (userId, newRole) => {
-  return sqlDAL.promoteUser(userId, newRole);
+exports.promoteUser = async function (userId) {
+    return sqlDAL.promoteUser(userId);
 };
-
 
 /**
  * 
  * @param {*} userId 
- * @returns promotes the user matching the userId
+ * @returns demotes the user matching the userId
  */
 exports.demoteUser = async function (userId) {
-    return sqlDAL.demoteUser(userId, 'user');
-}
+    return sqlDAL.demoteUser(userId);
+};
 
 /**
  * 
@@ -192,26 +179,26 @@ exports.demoteUser = async function (userId) {
  * @returns disables the user matching the userId
  */
 exports.disableUser = async function (userId) {
-    return sqlDAL.disableUser(userId);
+    try {
+        let result = await sqlDAL.disableUser(userId);
+        return { status: STATUS_CODES.success, data: result };
+    } catch (error) {
+        console.error('Error in disableUser:', error);
+        return { status: STATUS_CODES.error, message: error.message };
+    }
 }
+
 /**
  * 
  * @param {*} userId 
  * @returns enables the user matching the userId
  */
 exports.enableUser = async function (userId) {
-    return sqlDAL.enableUser(userId);
+    try {
+        let result = await sqlDAL.enableUser(userId);
+        return { status: STATUS_CODES.success, data: result };
+    } catch (error) {
+        console.error('Error in enableUser:', error);
+        return { status: STATUS_CODES.error, message: error.message };
+    }
 }
-
-// module.exports = {
-//     getUsers: exports.getUsers,
-//     createUser: exports.createUser,
-//     updateUserPassword: exports.updateUserPassword,
-//     login: exports.login,
-//     getUserById: exports.getUserById,   
-//     deleteUserById: exports.deleteUserById,
-//     promoteUser: exports.promoteUser,
-//     demoteUser: exports.demoteUser,
-//     disableUser: exports.disableUser,
-//     enableUser: exports.enableUser
-// };
