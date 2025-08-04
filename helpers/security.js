@@ -7,9 +7,10 @@
  * @param {Object} user - User object from session
  * @returns {boolean} True if user is admin
  */
-exports.isAdmin = function(user) {
-    return user && user.roles && user.roles.includes('admin');
+exports.isAdmin = function (user) {
+  return user && user.role && user.role.toLowerCase() === 'admin';
 };
+
 
 /**
  * Validate and sanitize input to prevent XSS

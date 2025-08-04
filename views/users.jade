@@ -6,31 +6,31 @@ block content
     div(class="userContainer")
       each user in users 
         div(class='userBox')
-          h2 Username: #{user.username}
-          div Password: #{user.password}
+          h2 Username: #{user.Username}
+          div Password: #{user.Password}
           div
             strong Role:
-            if user.role
-              span(class="role-badge role-" + user.role)= user.role.toUpperCase()
+            if user.Role
+              span(class="role-badge role-" + user.Role)= user.Role.toUpperCase()
             else
               span Unknown Role 
 
 
           div
-            if user.disabled
+            if user.Enabled === 0
               span(class='disabled-label') Account Disabled
-              a(href='/a/enable/' + user.userId) Enable
+              a(href='/a/enable/' + user.UserId) Enable
             else
-              a(href='/a/disable/' + user.userId) Disable
+              a(href='/a/disable/' + user.UserId) Disable
 
           div
-            a(href='/a/delete/' + user.userId) Remove
+            a(href='/a/delete/' + user.UserId) Remove
 
           div
-            if user.role === 'admin'
-              if user.role != 'admin'
-                a(href='/a/promote/' + user.userId) Promote
-              if user.role != 'user'
-                a(href='/a/demote/' + user.userId) Demote
+            if user.Role === 'admin'
+              if user.Role != 'admin'
+                a(href='/a/promote/' + user.UserId) Promote
+              if user.Role != 'user'
+                a(href='/a/demote/' + user.UserId) Demote
 
 

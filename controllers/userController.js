@@ -23,12 +23,28 @@ exports.getUsers = async function () {
  * @returns a Result with status/message and the new user id as data
  */
 exports.createUser = async function (username, email, password) {
-    let hashedPassword = await bcrypt.hash(password, 10);
+    // let hashedPassword = await bcrypt.hash(password, 10);
 
-    let result = await sqlDAL.createUser(username, hashedPassword, email);
+    // let result = await sqlDAL.createUser(username, hashedPassword, email);
 
-    return result;
+    // return result;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const query = `
+        INSERT INTO Users (Username, Password, Role, Enabled)
+        VALUES (?, ?, 'user', 1)
+    `;
+
+    try {
+        await sqlDAL.query(query, [username, email, hashedPassword]);
+        return { status: 'success' };
+    } catch (err) {
+        console.error('Register error:', err);
+        return { status: 'error', error: err };
 }
+}
+
+
 
 /**
  * 
@@ -151,7 +167,7 @@ exports.deleteUserById = function (userId) {
  * @returns promotes the user matching the userId
  */
 exports.promoteUser = async (userId, newRole) => {
-  return await sqlDAL.query("UPDATE Users SET Role = ? WHERE UserId = ?", [newRole, userId]);
+  return sqlDAL.promoteUser(userId, newRole);
 };
 
 

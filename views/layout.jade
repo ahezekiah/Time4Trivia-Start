@@ -15,7 +15,7 @@ html
         a(class='', href='/g/leaderboard') Leaderboard
         a(class='', href='/q/addQuestions') Add Questions
         a(class='', href='/q/viewQuestions') View Questions
-        if user.roles && user.roles.includes('admin')
+        if user.role === 'admin'
           a(class='', href='/a/users') Users
         a(class='', href='/u/profile') Profile
         a(class='', href='/u/logout') Logout #{user.username}

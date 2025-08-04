@@ -33,69 +33,83 @@ const STATUS_CODES = require('../models/statusCodes').STATUS_CODES;
  * Get all users with their roles
  * @returns array of user models
  */
-exports.getAllUsers = async function () {
-    const users = [];
-    const con = await mysql.createConnection(sqlConfig);
+// exports.getAllUsers = async function () {
+//     const users = [];
+//     const con = await mysql.createConnection(sqlConfig);
 
-    try {
-        let sql = `select * from Users`;
-        const [userResults] = await con.query(sql);
+//     try {
+//         let sql = `select * from Users`;
+//         const [userResults] = await con.query(sql);
 
-        for (let user of userResults) {
-            let rolesSql = `select UserId, Role from UserRoles ur join Roles r on ur.roleid = r.roleid where ur.UserId = ?`;
-            const [roleResults] = await con.query(rolesSql, [user.UserId]);
+//         for (let user of userResults) {
+//             let rolesSql = `select UserId, Role from UserRoles ur join Roles r on ur.roleid = r.roleid where ur.UserId = ?`;
+//             const [roleResults] = await con.query(rolesSql, [user.UserId]);
 
-            let roles = [];
-            for (let role of roleResults) {
-                roles.push(role.Role);
-            }
+//             let roles = [];
+//             for (let role of roleResults) {
+//                 roles.push(role.Role);
+//             }
 
-            let u = new User(user.UserId, user.Username, user.Email, user.Password, user.FirstName, user.LastName, roles);
-            users.push(u);
-        }
+//             let u = new User(user.UserId, user.Username, user.Email, user.Password, user.FirstName, user.LastName, roles);
+//             users.push(u);
+//         }
 
-        return users;
-    } catch (err) {
-        console.log(err);
-        throw err;
-    } finally {
-        await con.end();
-    }
-};
+//         return users;
+//     } catch (err) {
+//         console.log(err);
+//         throw err;
+//     } finally {
+//         await con.end();
+//     }
+// };
+
+async function getAllUsers() {
+  const [rows] = await pool.query('SELECT * FROM Users');
+  return rows;
+}
 
 /**
  * Get all users with role information joined
  * @returns array of user models
  */
-exports.getUsers = async function () {
-    const users = [];
-    const con = await mysql.createConnection(sqlConfig);
+// exports.getUsers = async function () {
+//     const users = [];
+//     const con = await mysql.createConnection(sqlConfig);
 
-    try {
-        let sql = `select * from Users u join UserRoles ur on u.userid = ur.userId join Roles r on ur.roleId = r.roleId`;
-        const [userResults] = await con.query(sql);
+//     try {
+//         let sql = `select * from Users u join UserRoles ur on u.userid = ur.userId join Roles r on ur.roleId = r.roleId`;
+//         const [userResults] = await con.query(sql);
 
-        for (let user of userResults) {
-            let rolesSql = `select UserId, Role from UserRoles ur join Roles r on ur.roleid = r.roleid where ur.UserId = ?`;
-            const [roleResults] = await con.query(rolesSql, [user.UserId]);
+//         for (let user of userResults) {
+//             let rolesSql = `select UserId, Role from UserRoles ur join Roles r on ur.roleid = r.roleid where ur.UserId = ?`;
+//             const [roleResults] = await con.query(rolesSql, [user.UserId]);
 
-            let roles = [];
-            for (let role of roleResults) {
-                roles.push(role.Role);
-            }
+//             let roles = [];
+//             for (let role of roleResults) {
+//                 roles.push(role.Role);
+//             }
 
-            let u = new User(user.UserId, user.Username, user.Email, user.Password, user.FirstName, user.LastName, roles);
-            users.push(u);
-        }
+//             let u = new User(user.UserId, user.Username, user.Email, user.Password, user.FirstName, user.LastName, roles);
+//             users.push(u);
+//         }
 
-        return users;
-    } catch (err) {
-        console.log(err);
-        throw err;
-    } finally {
-        await con.end();
-    }
-};
+//         return users;
+//     } catch (err) {
+//         console.log(err);
+//         throw err;
+//     } finally {
+//         await con.end();
+//     }
+// };
+async function getUsers() {
+    const query = `SELECT UserID, Username, Password, Role FROM Users`;
+    const [results] = await pool.query(query);
+    return results;
+}
+
+
+
+
 
 /**
  * Get users by role with secure parameterized query
@@ -209,62 +223,77 @@ exports.deleteUserById = async function (userId) {
  * @param {number} userId - User ID
  * @returns Result object
  */
-exports.promoteUser = async function (userId) {
-    const con = await mysql.createConnection(sqlConfig);
-    let result = new Result();
+// exports.promoteUser = async function (userId) {
+//     const con = await mysql.createConnection(sqlConfig);
+//     let result = new Result();
 
-    try {
-        // Remove existing roles
-        let deleteRolesSql = `delete from UserRoles where UserId = ?`;
-        await con.query(deleteRolesSql, [userId]);
+//     try {
+//         // Remove existing roles
+//         let deleteRolesSql = `delete from UserRoles where UserId = ?`;
+//         await con.query(deleteRolesSql, [userId]);
 
-        // Add admin role (RoleId 2 for admin)
-        let insertRoleSql = `insert into UserRoles (UserId, RoleId) values (?, 2)`;
-        await con.query(insertRoleSql, [userId]);
+//         // Add admin role (RoleId 2 for admin)
+//         let insertRoleSql = `insert into UserRoles (UserId, RoleId) values (?, 2)`;
+//         await con.query(insertRoleSql, [userId]);
 
-        result.status = STATUS_CODES.success;
-        result.message = `User ${userId} promoted to admin!`;
-        return result;
-    } catch (err) {
-        console.log(err);
-        result.status = STATUS_CODES.failure;
-        result.message = err.message;
-        return result;
-    } finally {
-        await con.end();
-    }
-};
+//         result.status = STATUS_CODES.success;
+//         result.message = `User ${userId} promoted to admin!`;
+//         return result;
+//     } catch (err) {
+//         console.log(err);
+//         result.status = STATUS_CODES.failure;
+//         result.message = err.message;
+//         return result;
+//     } finally {
+//         await con.end();
+//     }
+// };
+async function promoteUser(userId) {
+    const query = `UPDATE Users SET Role = 'admin' WHERE UserID = ?`;
+    const [results] = await pool.query(query, [userId]);
+    return results;
+}
+
+
 
 /**
  * Demote user to regular user role with secure parameterized query
  * @param {number} userId - User ID
  * @returns Result object
  */
-exports.demoteUser = async function (userId) {
-    const con = await mysql.createConnection(sqlConfig);
-    let result = new Result();
+// exports.demoteUser = async function (userId) {
+//     const con = await mysql.createConnection(sqlConfig);
+//     let result = new Result();
 
-    try {
-        // Remove existing roles
-        let deleteRolesSql = `delete from UserRoles where UserId = ?`;
-        await con.query(deleteRolesSql, [userId]);
+//     try {
+//         // Remove existing roles
+//         let deleteRolesSql = `delete from UserRoles where UserId = ?`;
+//         await con.query(deleteRolesSql, [userId]);
 
-        // Add regular user role (RoleId 1 for user)
-        let insertRoleSql = `insert into UserRoles (UserId, RoleId) values (?, 1)`;
-        await con.query(insertRoleSql, [userId]);
+//         // Add regular user role (RoleId 1 for user)
+//         let insertRoleSql = `insert into UserRoles (UserId, RoleId) values (?, 1)`;
+//         await con.query(insertRoleSql, [userId]);
 
-        result.status = STATUS_CODES.success;
-        result.message = `User ${userId} demoted to regular user!`;
-        return result;
-    } catch (err) {
-        console.log(err);
-        result.status = STATUS_CODES.failure;
-        result.message = err.message;
-        return result;
-    } finally {
-        await con.end();
-    }
-};
+//         result.status = STATUS_CODES.success;
+//         result.message = `User ${userId} demoted to regular user!`;
+//         return result;
+//     } catch (err) {
+//         console.log(err);
+//         result.status = STATUS_CODES.failure;
+//         result.message = err.message;
+//         return result;
+//     } finally {
+//         await con.end();
+//     }
+// };
+
+async function demoteUser(userId) {
+    const query = `UPDATE Users SET Role = 'user' WHERE UserID = ? AND Username != 'admin'`;
+    const [results] = await pool.query(query, [userId]);
+    return results;
+}
+
+
 
 /**
  * Get user by username with secure parameterized query
@@ -388,33 +417,42 @@ exports.registerUser = async function (username, email, hashedPassword) {
  * @param {string} email - Email
  * @returns Result object
  */
-exports.createUser = async function (username, hashedPassword, email) {
-    const con = await mysql.createConnection(sqlConfig);
-    let result = new Result();
+// exports.createUser = async function (username, hashedPassword, email) {
+//     const con = await mysql.createConnection(sqlConfig);
+//     let result = new Result();
 
-    try {
-        let sql = `insert into Users (Username, Email, Password, FirstName, LastName) values (?, ?, ?, '', '')`;
-        const [insertResult] = await con.query(sql, [username, email, hashedPassword]);
+//     try {
+//         let sql = `insert into Users (Username, Email, Password, FirstName, LastName) values (?, ?, ?, '', '')`;
+//         const [insertResult] = await con.query(sql, [username, email, hashedPassword]);
 
-        let newUserId = insertResult.insertId;
+//         let newUserId = insertResult.insertId;
 
-        // Assign default user role (RoleId 1)
-        let roleSql = `insert into UserRoles (UserId, RoleId) values (?, 1)`;
-        await con.query(roleSql, [newUserId]);
+//         // Assign default user role (RoleId 1)
+//         let roleSql = `insert into UserRoles (UserId, RoleId) values (?, 1)`;
+//         await con.query(roleSql, [newUserId]);
 
-        result.status = STATUS_CODES.success;
-        result.message = 'Account Created with User Id: ' + newUserId;
-        result.data = newUserId;
-        return result;
-    } catch (err) {
-        console.log(err);
-        result.status = STATUS_CODES.failure;
-        result.message = err.message;
-        return result;
-    } finally {
-        await con.end();
-    }
-};
+//         result.status = STATUS_CODES.success;
+//         result.message = 'Account Created with User Id: ' + newUserId;
+//         result.data = newUserId;
+//         return result;
+//     } catch (err) {
+//         console.log(err);
+//         result.status = STATUS_CODES.failure;
+//         result.message = err.message;
+//         return result;
+//     } finally {
+//         await con.end();
+//     }
+// };
+async function createUser(username, password, email) {
+  const [result] = await pool.query(
+    'INSERT INTO Users (Username, Password, Email) VALUES (?, ?, ?)',
+    [username, password, email]
+  );
+  return result;
+}
+
+
 
 /**
  * Update user password with secure parameterized query
@@ -454,30 +492,38 @@ exports.updateUserPassword = async function (userId, hashedPassword) {
  * @param {number} count - Number of questions to return
  * @returns {Promise<Object[]>} Array of question objects
  */
-exports.getRandomQuestions = async function(count = 10) {
-    const con = await mysql.createConnection(sqlConfig);
+// exports.getRandomQuestions = async function(count = 10) {
+//     const con = await mysql.createConnection(sqlConfig);
     
-    try {
-        // Use RAND() for random selection with LIMIT parameter binding
-        let sql = `SELECT QuestionId, QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3 
-                   FROM Questions
-                   ORDER BY RAND()
-                   LIMIT ?`;
+//     try {
+//         // Use RAND() for random selection with LIMIT parameter binding
+//         let sql = `SELECT QuestionId, QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3 
+//                    FROM Questions
+//                    ORDER BY RAND()
+//                    LIMIT ?`;
         
-        const [results] = await con.query(sql, [count]);
-        return results;
-    } catch (err) {
-        console.log(err);
-        throw err;
-    } finally {
-        await con.end();
-    }
-};
+//         const [results] = await con.query(sql, [count]);
+//         return results;
+//     } catch (err) {
+//         console.log(err);
+//         throw err;
+//     } finally {
+//         await con.end();
+//     }
+// };
 
-exports.getRandomQuestions = async () => {
-  return await m.query("SELECT * FROM Questions ORDER BY RAND() LIMIT 10");
-};
+// exports.getRandomQuestions = async () => {
+//   return await m.query("SELECT * FROM Questions ORDER BY RAND() LIMIT 10");
+// };
 
+
+async function getRandomQuestions(limit = 10) {
+  const [rows] = await pool.query(
+    'SELECT * FROM Questions ORDER BY RAND() LIMIT ?',
+    [limit]
+  );
+  return rows;
+}
 
 /**
  * Save a user's game score to the database with secure parameterized query
@@ -506,25 +552,38 @@ exports.saveUserScore = async function(userId, score, questionsAnswered) {
  * @param {number} limit - Number of top scores to return
  * @returns {Promise<Object[]>} Array of score objects with user info
  */
-exports.getLeaderboard = async function(limit = 10) {
-    const con = await mysql.createConnection(sqlConfig);
+// exports.getLeaderboard = async function(limit = 10) {
+//     const con = await mysql.createConnection(sqlConfig);
     
-    try {
-        let sql = `SELECT us.Score, us.QuestionsAnswered, us.DatePlayed, u.Username, u.FirstName, u.LastName
-                   FROM UserScores us
-                   JOIN Users u ON us.UserId = u.UserId
-                   ORDER BY us.Score DESC, us.DatePlayed ASC
-                   LIMIT ?`;
+//     try {
+//         let sql = `SELECT us.Score, us.QuestionsAnswered, us.DatePlayed, u.Username, u.FirstName, u.LastName
+//                    FROM UserScores us
+//                    JOIN Users u ON us.UserId = u.UserId
+//                    ORDER BY us.Score DESC, us.DatePlayed ASC
+//                    LIMIT ?`;
         
-        const [results] = await con.query(sql, [limit]);
-        return results;
-    } catch (err) {
-        console.log(err);
-        throw err;
-    } finally {
-        await con.end();
-    }
-};
+//         const [results] = await con.query(sql, [limit]);
+//         return results;
+//     } catch (err) {
+//         console.log(err);
+//         throw err;
+//     } finally {
+//         await con.end();
+//     }
+// };
+
+async function getLeaderboard() {
+    const query = `
+      SELECT UserID, COUNT(*) AS Score
+      FROM UserScores
+      GROUP BY UserID
+      ORDER BY Score DESC
+      LIMIT 10
+    `;
+    const [results] = await pool.query(query);
+    return results;
+}
+
 
 /**
  * Get a user's score history with secure parameterized query
@@ -572,30 +631,34 @@ exports.getUserScores = async function(userId) {
 //     }
 // };
 
+// async function getAllQuestions() {
+//     try {
+//         const [rows] = await pool.query(`
+//         SELECT q.QuestionID, q.QuestionText, q.CorrectAnswer,
+//                 u.Username, u.Role
+//         FROM Questions q
+//         JOIN Users u ON q.UserID = u.UserID
+//         `);
+
+//         return rows.map((row) => ({
+//         questionId: row.QuestionID,
+//         text: row.QuestionText,
+//         correctAnswer: row.CorrectAnswer,
+//         user: {
+//             username: row.Username,
+//             role: row.Role
+//         }
+//         }));
+//     } catch (error) {
+//         console.error('Error fetching questions:', error);
+//         return [];
+//     }
+// }
+
 async function getAllQuestions() {
-    try {
-        const [rows] = await pool.query(`
-        SELECT q.QuestionID, q.QuestionText, q.CorrectAnswer,
-                u.Username, u.Role
-        FROM Questions q
-        JOIN Users u ON q.UserID = u.UserID
-        `);
-
-        return rows.map((row) => ({
-        questionId: row.QuestionID,
-        text: row.QuestionText,
-        correctAnswer: row.CorrectAnswer,
-        user: {
-            username: row.Username,
-            role: row.Role
-        }
-        }));
-    } catch (error) {
-        console.error('Error fetching questions:', error);
-        return [];
-    }
+  const [rows] = await pool.query('SELECT * FROM Questions');
+  return rows;
 }
-
 
 /**
  * Add a new question with secure parameterized query
@@ -635,23 +698,29 @@ exports.addQuestion = async function(questionText, correctAnswer, incorrectAnswe
  * @param {number} questionId - Question ID
  * @returns {Promise<Object>} Question object
  */
-exports.getQuestionById = async function(questionId) {
-    const con = await mysql.createConnection(sqlConfig);
+// exports.getQuestionById = async function(questionId) {
+//     const con = await mysql.createConnection(sqlConfig);
     
-    try {
-        let sql = `SELECT QuestionId, QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3 
-                   FROM Questions
-                   WHERE QuestionId = ?`;
+//     try {
+//         let sql = `SELECT QuestionId, QuestionText, CorrectAnswer, IncorrectAnswer1, IncorrectAnswer2, IncorrectAnswer3 
+//                    FROM Questions
+//                    WHERE QuestionId = ?`;
         
-        const [results] = await con.query(sql, [questionId]);
-        return results[0] || null;
-    } catch (err) {
-        console.log(err);
-        throw err;
-    } finally {
-        await con.end();
-    }
-};
+//         const [results] = await con.query(sql, [questionId]);
+//         return results[0] || null;
+//     } catch (err) {
+//         console.log(err);
+//         throw err;
+//     } finally {
+//         await con.end();
+//     }
+// };
+
+async function getQuestionById(id) {
+  const [rows] = await pool.query('SELECT * FROM Questions WHERE QuestionID = ?', [id]);
+  return rows[0];
+}
+
 
 /**
  * Update an existing question with secure parameterized query
@@ -738,10 +807,11 @@ async function query(sql, params) {
  * @returns {Promise<Object>} Result object with status and message
  */
 async function disableUser(userId) {
-    const connection = await mysql.createConnection(sqlConfig);
-    await connection.execute('UPDATE Users SET disabled = true WHERE userId = ?', [userId]);
-    await connection.end();
+    const query = `UPDATE Users SET IsDisabled = 1 WHERE UserID = ? AND Username != 'admin'`;
+    const [results] = await pool.query(query, [userId]);
+    return results;
 }
+
 
 /**
  * Enable a user account by ID with secure parameterized query
@@ -749,27 +819,26 @@ async function disableUser(userId) {
  * @returns {Promise<Object>} Result object with status and message
  */
 async function enableUser(userId) {
-    const connection = await mysql.createConnection(sqlConfig);
-    await connection.execute('UPDATE Users SET disabled = false WHERE userId = ?', [userId]);
-    await connection.end();
-}
-async function updateUserRole(userId, newRole) {
-    const connection = await mysql.createConnection(sqlConfig);
-    await connection.execute(`
-        UPDATE UserRoles SET roleId = (
-        SELECT roleId FROM Roles WHERE role = ?
-        ) WHERE userId = ?
-    `, [newRole, userId]);
-    await connection.end();
+    const query = `UPDATE Users SET IsDisabled = 0 WHERE UserID = ?`;
+    const [results] = await pool.query(query, [userId]);
+    return results;
 }
 
     module.exports = {
     query,
     disableUser,
     enableUser,
-    updateUserRole,
+    promoteUser,
+    demoteUser,
     getUserByUsername,
-    getAllQuestions
+    getAllQuestions,
+    createUser,
+    getRandomQuestions,
+    getAllUsers,
+    getAllQuestions,
+    getQuestionById,
+    getUsers,
+    getLeaderboard
 };
 
 exports.secureSecret = secureSecret;

@@ -22,6 +22,8 @@ exports.requireAdmin = function (req, res, next) {
     next();
 };
 
+
+
 exports.requireQuestionEdit = function (req, res, next) {
     if (!req.session.user) return res.redirect('/u/login');
     if (!req.session.user.role || req.session.user.role !== 'admin') {
@@ -32,6 +34,20 @@ exports.requireQuestionEdit = function (req, res, next) {
     }
     next();
 };
+
+exports.isAdmin = function(req, res, next) {
+    if (req.session.user && req.session.user.role === 'admin') {
+    return next();
+}
+    return res.status(403).render('unauthorized', { title: 'Access Denied' });
+}
+
+exports.isLoggedIn = function (req, res, next) {
+    if (req.session.user) {
+        return next();
+    }
+    res.redirect('/login');
+}
 
 // Inject user object into all views
 exports.attachUserToLocals = function (req, res, next) {

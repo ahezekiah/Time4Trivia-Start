@@ -67,6 +67,8 @@ insert into UserRoles (UserId, RoleId) values (@userId, @roleId);
 -- SELECT * FROM Users WHERE Username = ? AND Enabled = 1
 -- UPDATE Users SET Enabled = 1;
 
+SELECT q.QuestionID, q.QuestionText, q.CorrectAnswer
+FROM Questions q;
 
 
 -- Insert sample trivia questions

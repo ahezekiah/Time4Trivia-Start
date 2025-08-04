@@ -45,6 +45,8 @@ console.log('Login result:', result);
       username: result.data.username,
       role: result.data.role
     };
+    console.log("Logged in role:", result.data.role);
+
     return res.redirect('/'); // or '/dashboard' if needed
   }
 
