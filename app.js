@@ -7,8 +7,15 @@ var crypto = require('crypto');
 
 var session = require('express-session');
 
+
+
 // Generate a secure random session secret
 const sessionSecret = crypto.randomBytes(64).toString('hex');
+
+
+var app = express();
+
+
 
 // Secure session configuration
 var sessionConfig = {
@@ -24,15 +31,6 @@ var sessionConfig = {
   name: 'sessionId' // Change default session name
 }
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var adminRouter = require('./routes/admin');
-var gameRouter = require('./routes/game');
-var questionsRouter = require('./routes/questions');
-var authMiddleware = require('./middleware/auth');
-
-var app = express();
-
 app.use(session(sessionConfig));
 app.use(express.json());
 
@@ -45,6 +43,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+var adminRouter = require('./routes/admin');
+var gameRouter = require('./routes/game');
+var questionsRouter = require('./routes/questions');
+var authMiddleware = require('./middleware/auth');
+
+
 
 app.use('/', indexRouter);
 app.use('/u', usersRouter);
