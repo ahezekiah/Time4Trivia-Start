@@ -115,42 +115,123 @@ exports.updateUserPassword = async function (userId, currentPassword, newPasswor
 //     };
 // };
 
-exports.login = async function(username, password) {
+// exports.login = async function(username, password) {
+//     try {
+//         const [rows] = await sqlDAL.query(
+//             `SELECT r.Role FROM Roles r
+//             JOIN UserRoles ur ON ur.RoleId = r.RoleId
+//             WHERE ur.UserId = ?`,
+//             [user.UserId]
+//         );
+
+
+//         if (!rows || rows.length === 0) {
+//         return { status: 'error', message: 'User not found or disabled' };
+//         }
+
+//         const user = rows[0];
+
+//         const passwordMatch = await bcrypt.compare(password, user.password);
+//         if (!passwordMatch) {
+//         return { status: 'error', message: 'Incorrect password' };
+//         }
+
+//         // Now fetch roles if you're using roles
+//         const [roleRows] = await pool.query(
+//         'SELECT Role FROM UserRoles WHERE UserID = ?',
+//         [user.UserID]
+//         );
+//         const roles = roleRows.map(r => r.Role);
+
+//         return {
+//         status: 'success',
+//         data: {
+//             userId: user.UserID,
+//             username: user.Username,
+//             roles: roles.map(r => r.Role),
+//             disabled: user.Enabled === 0
+//         }
+//         };
+//     } catch (error) {
+//         console.error('Login error:', error);
+//         return { status: 'error', message: 'Internal server error' };
+//     }
+// };
+
+// exports.login = async (req, res) => {
+//     try {
+//         const { username, password } = req.body;
+
+//         // Step 1: Get user by username
+//         const [rows] = await sqlDAL.query(
+//         'SELECT * FROM Users WHERE Username = ? AND Enabled = 1',
+//         [username]
+//         );
+
+//         if (rows.length === 0) {
+//         return res.status(401).json({ error: 'Invalid username or account is disabled.' });
+//         }
+
+//         const user = rows[0]; // ✅ Moved declaration here to fix "access before initialization" error
+
+//         // Step 2: Check password
+//         const passwordMatch = await bcrypt.compare(password, user.Password);
+//         if (!passwordMatch) {
+//         return res.status(401).json({ error: 'Incorrect password.' });
+//         }
+
+//         // Step 3: Get user roles
+//         const [roleRows] = await sqlDAL.query(
+//         `SELECT r.Role FROM Roles r
+//         JOIN UserRoles ur ON ur.RoleId = r.RoleId
+//         WHERE ur.UserId = ?`,
+//         [user.UserId]
+//         );
+
+//         const roles = roleRows.map(row => row.Role);
+
+//         // Step 4: Respond with user data
+//         return res.json({
+//         userId: user.UserId,
+//         username: user.Username,
+//         roles,
+//         disabled: user.Enabled === 0
+//         });
+
+//     } catch (error) {
+//         console.error('Login error:', error);
+//         return res.status(500).json({ error: 'Login failed.' });
+//     }
+// };
+
+exports.login = async (req, res) => {
     try {
-        const [rows] = await sqlDAL.query(
-        'SELECT * FROM Users WHERE Username = ? AND Enabled = 1',
-        [username]
-        );
+        const { username, password } = req.body;
 
-        if (!rows || rows.length === 0) {
-        return { status: 'error', message: 'User not found or disabled' };
+        if (!username || !password) {
+        return res.status(400).json({ message: 'Username and password required.' });
         }
 
-        const user = rows[0];
+        const user = await sqlDAL.getUserByUsername(username);
+        if (!user) {
+        return res.status(401).json({ message: 'User not found or disabled.' });
+        }
 
-        const passwordMatch = await bcrypt.compare(password, user.password);
+        const passwordMatch = await bcrypt.compare(password, user.Password);
         if (!passwordMatch) {
-        return { status: 'error', message: 'Incorrect password' };
+        return res.status(401).json({ message: 'Incorrect password.' });
         }
 
-        // Now fetch roles if you're using roles
-        const [roleRows] = await pool.query(
-        'SELECT Role FROM UserRoles WHERE UserID = ?',
-        [user.UserID]
-        );
-        const roles = roleRows.map(r => r.Role);
+        // ✅ Success
+        return res.status(200).json({
+        message: 'Login successful',
+        userId: user.UserId,
+        username: user.Username
+        });
 
-        return {
-        status: 'success',
-        data: {
-            userId: user.UserID,
-            username: user.Username,
-            roles: roles
-        }
-        };
-    } catch (error) {
-        console.error('Login error:', error);
-        return { status: 'error', message: 'Internal server error' };
+    } catch (err) {
+        console.error('Login error:', err);
+        return res.status(500).json({ error: 'Login failed.' });
     }
 };
 

@@ -9,10 +9,17 @@ const sqlConfig = {
     password: 'w0RDp4Ss',
     database: 'Time4Trivia',
     multipleStatements: true,
+};
+
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'AFGLRT',
+    password: 'w0RDp4Ss',
+    database: 'Time4Trivia',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
-};
+});
 
 // Secure session configuration
 const crypto = require('crypto');
@@ -264,35 +271,45 @@ exports.demoteUser = async function (userId) {
  * @param {string} username - Username
  * @returns User object or null
  */
-exports.getUserByUsername = async function (username) {
-    const con = await mysql.createConnection(sqlConfig);
+// async function getUserByUsername(username) {
+//     const con = await mysql.createConnection(sqlConfig);
 
-    try {
-        let sql = `select * from Users where Username = ?`;
-        const [results] = await con.query(sql, [username]);
+//     try {
+//         let sql = `select * from Users where Username = ?`;
+//         const [results] = await con.query(sql, [username]);
 
-        if (results.length > 0) {
-            let user = results[0];
+//         if (results.length > 0) {
+//             let user = results[0];
             
-            let rolesSql = `select UserId, Role from UserRoles ur join Roles r on ur.roleid = r.roleid where ur.UserId = ?`;
-            const [roleResults] = await con.query(rolesSql, [user.UserId]);
+//             let rolesSql = `select UserId, Role from UserRoles ur join Roles r on ur.roleid = r.roleid where ur.UserId = ?`;
+//             const [roleResults] = await con.query(rolesSql, [user.UserId]);
 
-            let roles = [];
-            for (let role of roleResults) {
-                roles.push(role.Role);
-            }
+//             let roles = [];
+//             for (let role of roleResults) {
+//                 roles.push(role.Role);
+//             }
 
-            return new User(user.UserId, user.Username, user.Email, user.Password, user.FirstName, user.LastName, roles);
-        }
+//             return new User(user.UserId, user.Username, user.Email, user.Password, user.FirstName, user.LastName, roles);
+//         }
 
-        return null;
-    } catch (err) {
-        console.log(err);
-        throw err;
-    } finally {
-        await con.end();
-    }
-};
+//         return null;
+//     } catch (err) {
+//         console.log(err);
+//         throw err;
+//     } finally {
+//         await con.end();
+//     }
+// };
+
+async function getUserByUsername(username) {
+    const [rows] = await pool.query(
+        'SELECT * FROM Users WHERE Username = ? AND Enabled = 1',
+        [username]
+    );
+    return rows[0]; // only return first match
+}
+
+
 
 /**
  * Get user roles by user ID with secure parameterized query
@@ -720,7 +737,8 @@ async function updateUserRole(userId, newRole) {
     query,
     disableUser,
     enableUser,
-    updateUserRole
+    updateUserRole,
+    getUserByUsername
 };
 
 exports.secureSecret = secureSecret;

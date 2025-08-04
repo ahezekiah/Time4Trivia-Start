@@ -45,10 +45,10 @@ insert into UserRoles (UserId, RoleId) values (@userId, @roleId);
 -- select * from roles;
 -- select * from userroles;
 
-SELECT u.userId, u.username, u.password, r.role, u.disabled
-FROM users u
-LEFT JOIN userroles ur ON u.userId = ur.userId
-LEFT JOIN roles r ON r.roleId = ur.roleId;
+-- SELECT u.userId, u.username, u.password, r.role, u.disabled
+-- FROM users u
+-- LEFT JOIN userroles ur ON u.userId = ur.userId
+-- LEFT JOIN roles r ON r.roleId = ur.roleId;
 
 
 SELECT u.username, r.role
@@ -56,8 +56,10 @@ FROM Users u
 JOIN UserRoles ur ON u.userId = ur.userId
 JOIN Roles r ON ur.roleId = r.roleId;
 
-SELECT * FROM Users WHERE Username = ? AND Enabled = 1
-UPDATE Users SET Enabled = 1;
+UPDATE Users SET Enabled = 1 WHERE username = 'admin';
+
+-- SELECT * FROM Users WHERE Username = ? AND Enabled = 1
+-- UPDATE Users SET Enabled = 1;
 
 
 
