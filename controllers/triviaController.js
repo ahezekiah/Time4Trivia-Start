@@ -1,14 +1,14 @@
-const sqlDal = require('../data/sqlDAL');
+const sqlDAL = require('../data/sqlDAL');
 const Question = require('../models/questions').Question;
 
 /**
  * Get a random set of trivia questions
  * @param {number} count 
  * @returns {Promise<Question[]>} 
- */
+ */ 
 exports.getRandomQuestions = async function(count = 10) {
     try {
-        const questions = await sqlDal.getRandomQuestions(count);
+        const questions = await sqlDAL.getRandomQuestions(count);
         return questions.map(q => new Question(
             q.QuestionId,
             q.QuestionText,
@@ -30,7 +30,7 @@ exports.getRandomQuestions = async function(count = 10) {
  */
 exports.saveUserScore = async function(userId, score, questionsAnswered) {
     try {
-        return await sqlDal.saveUserScore(userId, score, questionsAnswered);
+        return await sqlDAL.saveUserScore(userId, score, questionsAnswered);
     } catch (error) {
         console.error('Error saving user score:', error);
         throw error;
@@ -44,7 +44,7 @@ exports.saveUserScore = async function(userId, score, questionsAnswered) {
  */
 exports.getLeaderboard = async function(limit = 10) {
     try {
-        return await sqlDal.getLeaderboard(limit);
+        return await sqlDAL.getLeaderboard(limit);
     } catch (error) {
         console.error('Error getting leaderboard:', error);
         throw error;
@@ -58,7 +58,7 @@ exports.getLeaderboard = async function(limit = 10) {
  */
 exports.getUserScores = async function(userId) {
     try {
-        return await sqlDal.getUserScores(userId);
+        return await sqlDAL.getUserScores(userId);
     } catch (error) {
         console.error('Error getting user scores:', error);
         throw error;

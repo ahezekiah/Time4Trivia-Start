@@ -116,7 +116,7 @@ async function getUsers() {
  * @param {string} role - The role to filter by
  * @returns array of user models
  */
-exports.getUsersByRole = async function (role) {
+async function getUsersByRole(role) {
     const users = [];
     const con = await mysql.createConnection(sqlConfig);
 
@@ -151,7 +151,7 @@ exports.getUsersByRole = async function (role) {
  * @param {number} userId - User ID
  * @returns User object or null
  */
-exports.getUserById = async function (userId) {
+async function getUserById(userId) {
     const con = await mysql.createConnection(sqlConfig);
 
     try {
@@ -186,7 +186,7 @@ exports.getUserById = async function (userId) {
  * @param {number} userId - User ID
  * @returns Result object
  */
-exports.deleteUserById = async function (userId) {
+async function deleteUserById(userId) {
     const con = await mysql.createConnection(sqlConfig);
     let result = new Result();
 
@@ -345,7 +345,7 @@ async function getUserByUsername(username) {
  * @param {number} userId - User ID
  * @returns Array of role names
  */
-exports.getUserRoles = async function (userId) {
+async function getUserRoles(userId) {
     const con = await mysql.createConnection(sqlConfig);
 
     try {
@@ -371,8 +371,8 @@ exports.getUserRoles = async function (userId) {
  * @param {number} userId - User ID
  * @returns Array of role names
  */
-exports.getRolesByUserId = async function (userId) {
-    return exports.getUserRoles(userId);
+async function getRolesByUserId(userId) {
+    return getUserRoles(userId);
 };
 
 /**
@@ -382,7 +382,7 @@ exports.getRolesByUserId = async function (userId) {
  * @param {string} hashedPassword - Hashed password
  * @returns Result object
  */
-exports.registerUser = async function (username, email, hashedPassword) {
+async function registerUser(username, email, hashedPassword) {
     const con = await mysql.createConnection(sqlConfig);
     let result = new Result();
 
@@ -460,7 +460,7 @@ async function createUser(username, password, email) {
  * @param {string} hashedPassword - New hashed password
  * @returns Result object
  */
-exports.updateUserPassword = async function (userId, hashedPassword) {
+async function updateUserPassword(userId, hashedPassword) {
     const con = await mysql.createConnection(sqlConfig);
     let result = new Result();
 
@@ -532,7 +532,7 @@ async function getRandomQuestions(limit = 10) {
  * @param {number} questionsAnswered - Total questions answered
  * @returns {Promise<boolean>} Success status
  */
-exports.saveUserScore = async function(userId, score, questionsAnswered) {
+async function saveUserScore(userId, score, questionsAnswered) {
     const con = await mysql.createConnection(sqlConfig);
     
     try {
@@ -590,7 +590,7 @@ async function getLeaderboard() {
  * @param {number} userId - User ID
  * @returns {Promise<Object[]>} Array of user's scores
  */
-exports.getUserScores = async function(userId) {
+async function getUserScores(userId) {
     const con = await mysql.createConnection(sqlConfig);
     
     try {
@@ -669,7 +669,7 @@ async function getAllQuestions() {
  * @param {string} incorrectAnswer3 - Third incorrect answer
  * @returns {Promise<Object>} Result object with status and message
  */
-exports.addQuestion = async function(questionText, correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3) {
+async function addQuestion(questionText, correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3) {
     const con = await mysql.createConnection(sqlConfig);
     let result = new Result();
     
@@ -732,7 +732,7 @@ async function getQuestionById(id) {
  * @param {string} incorrectAnswer3 - Third incorrect answer
  * @returns {Promise<Object>} Result object with status and message
  */
-exports.updateQuestion = async function(questionId, questionText, correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3) {
+async function updateQuestion(questionId, questionText, correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3) {
     const con = await mysql.createConnection(sqlConfig);
     let result = new Result();
     
@@ -766,7 +766,7 @@ exports.updateQuestion = async function(questionId, questionText, correctAnswer,
  * @param {number} questionId - Question ID
  * @returns {Promise<Object>} Result object with status and message
  */
-exports.deleteQuestion = async function(questionId) {
+async function deleteQuestion(questionId) {
     const con = await mysql.createConnection(sqlConfig);
     let result = new Result();
     
@@ -838,7 +838,15 @@ async function enableUser(userId) {
     getAllQuestions,
     getQuestionById,
     getUsers,
-    getLeaderboard
+    getLeaderboard,
+    saveUserScore,
+    updateUserPassword,
+    registerUser,
+    getUsersByRole,
+    getUserById,
+    deleteUserById,
+    getUserRoles,
+    getRolesByUserId
 };
 
 exports.secureSecret = secureSecret;
