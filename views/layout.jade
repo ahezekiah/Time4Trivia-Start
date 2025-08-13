@@ -9,7 +9,7 @@ html
   body
     nav
       a(class='active', href='/') Home
-      a(class='', href='/leaderboard') Leaderboard
+      
       if user
         a(class='', href='/g/play') Play
         a(class='', href='/g/leaderboard') Leaderboard
@@ -20,5 +20,6 @@ html
         a(class='', href='/u/profile') Profile
         a(class='', href='/u/logout') Logout #{user.username}
       else
+        a(class='', href='/leaderboard') Leaderboard
         a(class='', href='/u/login') Login
     block content
