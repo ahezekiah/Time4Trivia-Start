@@ -23,6 +23,7 @@ const pool = mysql.createPool({
 
 // Secure session configuration
 const crypto = require('crypto');
+const { get } = require("express/lib/response");
 const secureSecret = crypto.randomBytes(64).toString('hex');
 
 const User = require('../models/user').User;
@@ -846,7 +847,11 @@ async function enableUser(userId) {
     getUserById,
     deleteUserById,
     getUserRoles,
-    getRolesByUserId
+    getRolesByUserId,
+    getUserScores,
+    deleteQuestion,
+    addQuestion,
+    updateQuestion,
 };
 
 exports.secureSecret = secureSecret;
