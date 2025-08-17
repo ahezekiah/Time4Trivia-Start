@@ -1,8 +1,10 @@
+console.log("1. Starting app.js");
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+console.log("2. Required express, path, cookieParser, morgan");
 var crypto = require('crypto');
 
 var session = require('express-session');
@@ -14,6 +16,7 @@ const sessionSecret = crypto.randomBytes(64).toString('hex');
 
 
 var app = express();
+console.log("3. Express app created");
 
 
 
