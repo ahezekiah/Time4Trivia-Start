@@ -20,12 +20,12 @@ pipeline {
             steps {
                 // Copy new code to your app directory
                 sh '''
-                     # Copy new code to app directory
-                     cp -r * ${APP_DIR}/
-                     # Clean up
-                     rm -f ${APP_DIR}/Jenkinsfile ${APP_DIR}/.git*
-                     # Ensure ownership
-                     chown -R user:user ${APP_DIR}
+                     # Copy new code to app directory using sudo
+                     sudo cp -r * ${APP_DIR}/
+                     # Remove Jenkins-specific files
+                     sudo rm -f ${APP_DIR}/Jenkinsfile ${APP_DIR}/.git*
+                     # Fix ownership
+                     sudo chown -R user:user ${APP_DIR}
                   '''
             }
         }
