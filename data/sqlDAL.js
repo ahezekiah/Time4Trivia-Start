@@ -3,11 +3,14 @@
  */
 var mysql = require("mysql2/promise");
 
+require('dotenv').config();
+
 const sqlConfig = {
-    host: 'localhost',
-    user: 'AFGLRT',
-    password: 'w0RDp4Ss',
-    database: 'Time4Trivia',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    port: prcoess.env.DB_PORT || 3306
     multipleStatements: true,
 };
 
